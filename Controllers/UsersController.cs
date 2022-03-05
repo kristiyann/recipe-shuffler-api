@@ -18,8 +18,12 @@ namespace recipe_shuffler.Controllers
         [HttpGet]
         public IActionResult Get(Guid id)
         {
-            Users user = _service.Get(id);
-            return Ok(user);
+            if (id != Guid.Empty)
+            {
+                Users user = _service.Get(id);
+                return Ok(user);
+            }
+            else return BadRequest("Invalid parameters");
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace recipe_shuffler.Models
 {
@@ -13,6 +14,7 @@ namespace recipe_shuffler.Models
 
         public string Password { get; set; } = string.Empty;
 
+        [JsonIgnore]
         public IEnumerable<Recipes>? Recipes { get; set; }
 
         public bool Active { get; set; } = true;

@@ -35,9 +35,13 @@ namespace recipe_shuffler.Services
             throw new NotImplementedException();
         }
 
-        public Task<bool> Delete(Guid id)
+        public Recipes Delete(Guid id)
         {
-            throw new NotImplementedException();
+            Recipes recipe = _context.Recipes.FirstOrDefault(x => x.Id == id);
+
+            _context.Remove(recipe);
+
+            return recipe;
         }
 
         public Recipes convertToModel(RecipeInsertModel model)
@@ -49,6 +53,7 @@ namespace recipe_shuffler.Services
             recipe.HasPoultry = model.HasPoultry;
             recipe.Instructions = model.Instructions;
             recipe.Ingredients =  model.Ingredients;
+            recipe.User = _context.Users.Find(model.UserId);
 
             return recipe;
         }

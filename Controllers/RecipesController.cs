@@ -27,14 +27,24 @@ namespace recipe_shuffler.Controllers
 
                 return this.Ok(list);
             }
-            else return this.NotFound();
+            else return BadRequest("Invalid parameters");
         }
 
         
         [HttpPost]
-        public IActionResult Insert(RecipeInsertModel model) 
+        public async Task<IActionResult> Insert(RecipeInsertModel model) 
         { 
-            return this.Ok(_service.Insert(model));
+            return this.Ok(await _service.Insert(model));
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(Guid id)
+        {
+            if (id != Guid.Empty)
+            {
+                return this.Ok(_service.Delete(id));
+            }
+            else return BadRequest("Invalid parameters");
         }
     }
 }
