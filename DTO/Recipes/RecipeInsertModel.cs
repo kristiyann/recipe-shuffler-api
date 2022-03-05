@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace recipe_shuffler.Models
+﻿namespace recipe_shuffler.DTO
 {
-    public class Recipes
+    public class RecipeInsertModel
     {
-        [Key]
         public Guid Id { get; set; }
 
         public string? Title { get; set; } = string.Empty;
@@ -20,7 +17,5 @@ namespace recipe_shuffler.Models
         public bool HasPork { get; set; }
 
         public Guid? UserId { get; set; }
-
-        public Users? User { get; set; }
     }
 }
