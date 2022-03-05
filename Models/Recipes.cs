@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace recipe_shuffler.Models
 {
@@ -21,6 +22,7 @@ namespace recipe_shuffler.Models
 
         public Guid? UserId { get; set; }
 
+        [JsonIgnore]
         public Users? User { get; set; }
     }
 }

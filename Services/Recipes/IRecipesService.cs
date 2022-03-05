@@ -9,7 +9,7 @@ namespace recipe_shuffler.Services
 
         Task<Recipes> Insert(RecipeInsertModel recipe);
 
-        Task<Recipes> Update(Recipes recipe);
+        Task<Recipes> Update(RecipeInsertModel recipe);
 
         Recipes Delete(Guid id);
     }

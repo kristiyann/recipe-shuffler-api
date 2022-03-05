@@ -23,16 +23,20 @@ namespace recipe_shuffler.Services
 
         public async Task<Recipes> Insert(RecipeInsertModel model)
         {
-            Recipes recipe = convertToModel(model);
+            Recipes recipe = ConvertToModel(model);
             _context.Recipes.Add(recipe);
             await _context.SaveChangesAsync();
 
             return recipe;
         }
 
-        public Task<Recipes> Update(Recipes recipe)
+        public async Task<Recipes> Update(RecipeInsertModel model)
         {
-            throw new NotImplementedException();
+            Recipes recipe = ConvertToModel(model);
+            _context.Recipes.Update(recipe);
+            await _context.SaveChangesAsync();
+
+            return recipe;
         }
 
         public Recipes Delete(Guid id)
@@ -41,14 +45,17 @@ namespace recipe_shuffler.Services
 
             _context.Remove(recipe);
 
+            _context.SaveChangesAsync();
+
             return recipe;
         }
 
-        public Recipes convertToModel(RecipeInsertModel model)
+        public Recipes ConvertToModel(RecipeInsertModel model)
         {
-            Recipes recipe = new Recipes();
+            Recipes recipe = new();
             recipe.Id = model.Id;
             recipe.Title = model.Title;
+            recipe.Image = model.Image;
             recipe.HasPork = model.HasPork;
             recipe.HasPoultry = model.HasPoultry;
             recipe.Instructions = model.Instructions;

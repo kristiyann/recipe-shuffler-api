@@ -37,6 +37,12 @@ namespace recipe_shuffler.Controllers
             return this.Ok(await _service.Insert(model));
         }
 
+        [HttpPut]
+        public async Task<IActionResult> Update(RecipeInsertModel model)
+        {
+            return this.Ok(await _service.Update(model));
+        }
+
         [HttpDelete]
         public IActionResult Delete(Guid id)
         {
