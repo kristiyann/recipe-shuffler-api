@@ -12,5 +12,7 @@ namespace recipe_shuffler.Services
         Task<Users> Update(UserUpdateModel model);
 
         Users ChangeActive(Guid id);
+
+        bool UserAuth(String email, String password);
     }
 }

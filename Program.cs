@@ -1,6 +1,20 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OData.Edm;
 using recipe_shuffler.Data;
+using recipe_shuffler.Models;
 using recipe_shuffler.Services;
+using Microsoft.AspNetCore.OData;
+using Microsoft.OData.ModelBuilder;
+
+
+// OData
+static IEdmModel GetEdmModel()
+{
+    ODataConventionModelBuilder builder = new();
+    builder.EntitySet<Recipes>("Recipes");
+    builder.EntitySet<Users>("Users");
+    return builder.GetEdmModel();
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +29,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddControllers().AddOData(opt => opt.AddRouteComponents("v1", GetEdmModel()).Filter().Select().Expand());
 
 // Service Layer
 builder.Services.AddScoped<IRecipesService, RecipesService>();

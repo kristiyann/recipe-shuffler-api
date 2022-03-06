@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using recipe_shuffler.Data;
 using recipe_shuffler.DTO;
 using recipe_shuffler.Models;
 using recipe_shuffler.Services;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Formatter;
 
 namespace recipe_shuffler.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RecipesController : Controller
+    public class RecipesController : ODataController
     {
         private readonly IRecipesService _service;
 
@@ -19,9 +20,10 @@ namespace recipe_shuffler.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetList(Guid userId) 
+        [EnableQuery]
+        public IActionResult GetList([FromODataUri] Guid userId) 
         {
-            if (userId != Guid.Empty)
+            if (userId != Guid.Empty && userId != default)
             {
                 List<Recipes> list = _service.GetList(userId);
 
@@ -30,7 +32,20 @@ namespace recipe_shuffler.Controllers
             else return BadRequest("Invalid parameters");
         }
 
-        
+        [HttpGet]
+        [Route("GetRandom")]
+        public IActionResult GetRandom(Guid userId)
+        {
+            if (userId != Guid.Empty && userId != default)
+            {
+                Recipes? recipe = _service.GetRandom(userId);
+
+                return this.Ok(recipe);
+            }
+            else return BadRequest("Invalid parameters");
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> Insert(RecipeInsertModel model) 
         { 
@@ -46,7 +61,7 @@ namespace recipe_shuffler.Controllers
         [HttpDelete]
         public IActionResult Delete(Guid id)
         {
-            if (id != Guid.Empty)
+            if (id != Guid.Empty && id != default)
             {
                 return this.Ok(_service.Delete(id));
             }

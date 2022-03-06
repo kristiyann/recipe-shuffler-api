@@ -19,7 +19,7 @@ namespace recipe_shuffler.Controllers
         [HttpGet]
         public IActionResult Get(Guid id)
         {
-            if (id != Guid.Empty)
+            if (id != Guid.Empty && id != default )
             {
                 IQueryable<UserReturnModel> user = _service.Get(id);
                 return Ok(user);
@@ -45,10 +45,27 @@ namespace recipe_shuffler.Controllers
         [Route("ChangeActive")]
         public IActionResult ChangeActive([FromQuery] Guid id)
         {
-            if (id != Guid.Empty)
+            if (id != Guid.Empty && id != default)
             {
                 Users user = _service.ChangeActive(id);
                 return Ok(user);
+            }
+            else return BadRequest("Invalid parameters");
+        }
+
+        [HttpGet]
+        [Route("UserAuth")]
+        public IActionResult UserAuth(string email, string password)
+        {
+            if (email != null && password != null)
+            {
+                bool passwordIsValid = _service.UserAuth(email, password);
+
+                if (passwordIsValid)
+                {
+                    return Ok(passwordIsValid);
+                }
+                else return Unauthorized();
             }
             else return BadRequest("Invalid parameters");
         }

@@ -11,6 +11,8 @@ namespace recipe_shuffler.Services
 
         Task<Recipes> Update(RecipeInsertModel recipe);
 
-        Recipes Delete(Guid id);
+        Task<Recipes> Delete(Guid id);
+
+        Recipes GetRandom(Guid userId);
     }
 }

@@ -42,6 +42,8 @@ namespace recipe_shuffler.Services
 
         public async Task<Users> Insert(Users user)
         {
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -50,6 +52,8 @@ namespace recipe_shuffler.Services
 
         public async Task<Users> Update(UserUpdateModel model)
         {
+            model.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
+
             Users user = ConvertToModel(model);
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
@@ -59,11 +63,27 @@ namespace recipe_shuffler.Services
 
         public Users ChangeActive(Guid id)
         {
-            Users user = _context.Users.FirstOrDefault(x => x.Id == id);
+            Users? user = _context.Users.FirstOrDefault(x => x.Id == id);
 
-            user.Active = !user.Active;
+            if (user != null)
+            {
+                user.Active = !user.Active;
+            }
 
             return user;
+        }
+
+        public bool UserAuth(String email, String password)
+        {
+             Users? user = _context.Users
+            .Where(x => x.Email == email)
+            .FirstOrDefault();
+
+            if (user != null)
+            {
+                return BCrypt.Net.BCrypt.Verify(password, user.Password);
+            }
+            else return false;
         }
 
         public Users ConvertToModel(UserUpdateModel model)

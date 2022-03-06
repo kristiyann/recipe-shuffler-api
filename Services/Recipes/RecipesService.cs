@@ -39,13 +39,31 @@ namespace recipe_shuffler.Services
             return recipe;
         }
 
-        public Recipes Delete(Guid id)
+        public async Task<Recipes> Delete(Guid id)
         {
-            Recipes recipe = _context.Recipes.FirstOrDefault(x => x.Id == id);
+            Recipes? recipe = _context.Recipes.FirstOrDefault(x => x.Id == id);
 
             _context.Remove(recipe);
 
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+
+            return recipe;
+        }
+
+        public Recipes GetRandom(Guid userId)
+        {
+            List<Recipes> list = _context.Recipes
+                .Where(x => x.UserId == userId).ToList<Recipes>();
+
+            int totalRecipes = list.Count;
+
+            Random random = new();
+            int offset = random.Next(0, totalRecipes);
+
+            Recipes? recipe = _context.Recipes
+                .Where(x => x.UserId == userId)
+                .Skip(offset)
+                .FirstOrDefault();
 
             return recipe;
         }
@@ -53,6 +71,7 @@ namespace recipe_shuffler.Services
         public Recipes ConvertToModel(RecipeInsertModel model)
         {
             Recipes recipe = new();
+
             recipe.Id = model.Id;
             recipe.Title = model.Title;
             recipe.Image = model.Image;
