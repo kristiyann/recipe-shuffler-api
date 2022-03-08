@@ -11,8 +11,8 @@ using Microsoft.OData.ModelBuilder;
 static IEdmModel GetEdmModel()
 {
     ODataConventionModelBuilder builder = new();
-    builder.EntitySet<Recipes>("Recipes");
-    builder.EntitySet<Users>("Users");
+    builder.EntitySet<Recipe>("Recipes");
+    builder.EntitySet<User>("Users");
     return builder.GetEdmModel();
 }
 

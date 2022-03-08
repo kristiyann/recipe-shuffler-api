@@ -21,13 +21,13 @@ namespace recipe_shuffler.Controllers
 
         [HttpGet]
         [EnableQuery]
-        public IActionResult GetList([FromODataUri] Guid userId) 
+        public IActionResult GetList(ODataQueryOptions<Recipe> queryOptions, Guid userId) 
         {
             if (userId != Guid.Empty && userId != default)
             {
-                List<Recipes> list = _service.GetList(userId);
+                List<Recipe> list = _service.GetList(userId);
 
-                return this.Ok(list);
+                return Ok(list);
             }
             else return BadRequest("Invalid parameters");
         }
@@ -38,9 +38,9 @@ namespace recipe_shuffler.Controllers
         {
             if (userId != Guid.Empty && userId != default)
             {
-                Recipes? recipe = _service.GetRandom(userId);
+                Recipe? recipe = _service.GetRandom(userId);
 
-                return this.Ok(recipe);
+                return Ok(recipe);
             }
             else return BadRequest("Invalid parameters");
         }
@@ -49,13 +49,13 @@ namespace recipe_shuffler.Controllers
         [HttpPost]
         public async Task<IActionResult> Insert(RecipeInsertModel model) 
         { 
-            return this.Ok(await _service.Insert(model));
+            return Ok(await _service.Insert(model));
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(RecipeInsertModel model)
         {
-            return this.Ok(await _service.Update(model));
+            return Ok(await _service.Update(model));
         }
 
         [HttpDelete]
@@ -63,7 +63,7 @@ namespace recipe_shuffler.Controllers
         {
             if (id != Guid.Empty && id != default)
             {
-                return this.Ok(_service.Delete(id));
+                return Ok(_service.Delete(id));
             }
             else return BadRequest("Invalid parameters");
         }

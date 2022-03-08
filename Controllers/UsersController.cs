@@ -28,17 +28,17 @@ namespace recipe_shuffler.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Insert(Users model)
+        public async Task<IActionResult> Insert(User model)
         {
-            Users user = await _service.Insert(model);
-            return this.Ok(user);
+            User user = await _service.Insert(model);
+            return Ok(user);
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(UserUpdateModel model)
         {
-            Users user = await _service.Update(model);
-            return this.Ok(user);
+            User user = await _service.Update(model);
+            return Ok(user);
         }
 
         [HttpPut]
@@ -47,7 +47,7 @@ namespace recipe_shuffler.Controllers
         {
             if (id != Guid.Empty && id != default)
             {
-                Users user = _service.ChangeActive(id);
+                User user = _service.ChangeActive(id);
                 return Ok(user);
             }
             else return BadRequest("Invalid parameters");
@@ -59,7 +59,7 @@ namespace recipe_shuffler.Controllers
         {
             if (email != null && password != null)
             {
-                bool passwordIsValid = _service.UserAuth(email, password);
+                bool passwordIsValid = _service.UserAuth(email, password); 
 
                 if (passwordIsValid)
                 {

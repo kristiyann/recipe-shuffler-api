@@ -13,35 +13,36 @@ namespace recipe_shuffler.Services
         {
             _context = context;
         }
-        public List<Recipes> GetList(Guid userId)
+        public List<Recipe> GetList(Guid userId)
         {
-            List<Recipes> list = _context.Recipes
-                .Where(x => x.UserId == userId).ToList();
-          
+            List<Recipe> list = _context.Recipes
+                .Where(x => x.UserId == userId)
+                .ToList();
+
             return list;
         }
 
-        public async Task<Recipes> Insert(RecipeInsertModel model)
+        public async Task<Recipe> Insert(RecipeInsertModel model)
         {
-            Recipes recipe = ConvertToModel(model);
+            Recipe recipe = ConvertToModel(model);
             _context.Recipes.Add(recipe);
             await _context.SaveChangesAsync();
 
             return recipe;
         }
 
-        public async Task<Recipes> Update(RecipeInsertModel model)
+        public async Task<Recipe> Update(RecipeInsertModel model)
         {
-            Recipes recipe = ConvertToModel(model);
+            Recipe recipe = ConvertToModel(model);
             _context.Recipes.Update(recipe);
             await _context.SaveChangesAsync();
 
             return recipe;
         }
 
-        public async Task<Recipes> Delete(Guid id)
+        public async Task<Recipe> Delete(Guid id)
         {
-            Recipes? recipe = _context.Recipes.FirstOrDefault(x => x.Id == id);
+            Recipe? recipe = _context.Recipes.FirstOrDefault(x => x.Id == id);
 
             _context.Remove(recipe);
 
@@ -50,17 +51,17 @@ namespace recipe_shuffler.Services
             return recipe;
         }
 
-        public Recipes GetRandom(Guid userId)
+        public Recipe GetRandom(Guid userId)
         {
-            List<Recipes> list = _context.Recipes
-                .Where(x => x.UserId == userId).ToList<Recipes>();
+            List<Recipe> list = _context.Recipes
+                .Where(x => x.UserId == userId).ToList();
 
             int totalRecipes = list.Count;
 
             Random random = new();
             int offset = random.Next(0, totalRecipes);
 
-            Recipes? recipe = _context.Recipes
+            Recipe? recipe = _context.Recipes
                 .Where(x => x.UserId == userId)
                 .Skip(offset)
                 .FirstOrDefault();
@@ -68,9 +69,9 @@ namespace recipe_shuffler.Services
             return recipe;
         }
 
-        public Recipes ConvertToModel(RecipeInsertModel model)
+        public Recipe ConvertToModel(RecipeInsertModel model)
         {
-            Recipes recipe = new();
+            Recipe recipe = new();
 
             recipe.Id = model.Id;
             recipe.Title = model.Title;
@@ -78,7 +79,7 @@ namespace recipe_shuffler.Services
             recipe.HasPork = model.HasPork;
             recipe.HasPoultry = model.HasPoultry;
             recipe.Instructions = model.Instructions;
-            recipe.Ingredients =  model.Ingredients;
+            recipe.Ingredients = model.Ingredients;
             recipe.User = _context.Users.Find(model.UserId);
 
             return recipe;

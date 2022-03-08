@@ -5,14 +5,14 @@ namespace recipe_shuffler.Services
 {
     public interface IRecipesService
     {
-        List<Recipes> GetList(Guid userId);
+        List<Recipe> GetList(Guid userId);
 
-        Task<Recipes> Insert(RecipeInsertModel recipe);
+        Task<Recipe> Insert(RecipeInsertModel recipe);
 
-        Task<Recipes> Update(RecipeInsertModel recipe);
+        Task<Recipe> Update(RecipeInsertModel recipe);
 
-        Task<Recipes> Delete(Guid id);
+        Task<Recipe> Delete(Guid id);
 
-        Recipes GetRandom(Guid userId);
+        Recipe GetRandom(Guid userId);
     }
 }

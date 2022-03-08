@@ -10,6 +10,6 @@ namespace recipe_shuffler.DTO.Users
 
         public string Email { get; set; } = string.Empty;
 
-        public IEnumerable<Recipes>? Recipes { get; set; }
+        public IEnumerable<Recipe>? Recipes { get; set; }
     }
 }

@@ -10,8 +10,8 @@ namespace recipe_shuffler.Data
 
         }
 
-        public DbSet<Users> Users { get; set; }
+        public DbSet<User> Users { get; set; }
 
-        public DbSet<Recipes> Recipes { get; set; }
+        public DbSet<Recipe> Recipes { get; set; }
     }
 }

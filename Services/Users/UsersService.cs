@@ -25,7 +25,7 @@ namespace recipe_shuffler.Services
                     Id = x.Id,
                     Username = x.Username,
                     Email = x.Email,
-                    Recipes = x.Recipes.Select(z => new Recipes()
+                    Recipes = x.Recipes.Select(z => new Recipe()
                     {
                         Id = z.Id,
                         Title = z.Title,
@@ -40,7 +40,7 @@ namespace recipe_shuffler.Services
             return user;
         }
 
-        public async Task<Users> Insert(Users user)
+        public async Task<User> Insert(User user)
         {
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
@@ -50,20 +50,20 @@ namespace recipe_shuffler.Services
             return user;
         }
 
-        public async Task<Users> Update(UserUpdateModel model)
+        public async Task<User> Update(UserUpdateModel model)
         {
             model.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
-            Users user = ConvertToModel(model);
+            User user = ConvertToModel(model);
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
 
             return user;
         }
 
-        public Users ChangeActive(Guid id)
+        public User ChangeActive(Guid id)
         {
-            Users? user = _context.Users.FirstOrDefault(x => x.Id == id);
+            User? user = _context.Users.FirstOrDefault(x => x.Id == id);
 
             if (user != null)
             {
@@ -75,7 +75,7 @@ namespace recipe_shuffler.Services
 
         public bool UserAuth(String email, String password)
         {
-             Users? user = _context.Users
+             User? user = _context.Users
             .Where(x => x.Email == email)
             .FirstOrDefault();
 
@@ -86,9 +86,9 @@ namespace recipe_shuffler.Services
             else return false;
         }
 
-        public Users ConvertToModel(UserUpdateModel model)
+        public User ConvertToModel(UserUpdateModel model)
         {
-            Users user = new();
+            User user = new();
             
             user.Id = model.Id;
             user.Username = model.Username;

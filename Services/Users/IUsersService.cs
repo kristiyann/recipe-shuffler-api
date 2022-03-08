@@ -7,11 +7,11 @@ namespace recipe_shuffler.Services
     {
         IQueryable<UserReturnModel> Get(Guid id);
 
-        Task<Users> Insert(Users user);
+        Task<User> Insert(User user);
 
-        Task<Users> Update(UserUpdateModel model);
+        Task<User> Update(UserUpdateModel model);
 
-        Users ChangeActive(Guid id);
+        User ChangeActive(Guid id);
 
         bool UserAuth(String email, String password);
     }
