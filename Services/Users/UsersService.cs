@@ -14,13 +14,13 @@ namespace recipe_shuffler.Services
             _context = context;
         }
 
-        public IQueryable<UserReturnModel> Get(Guid id)
+        public IQueryable<UserReturn> Get(Guid id)
         {
-            IQueryable<UserReturnModel> user = _context.Users
+            IQueryable<UserReturn> user = _context.Users
                 .Where(x => x.Id == id)
                 .Where(x => x.Active == true)
                 .Include(x => x.Recipes)
-                .Select(x => new UserReturnModel()
+                .Select(x => new UserReturn()
                 {
                     Id = x.Id,
                     Username = x.Username,
@@ -50,7 +50,7 @@ namespace recipe_shuffler.Services
             return user;
         }
 
-        public async Task<User> Update(UserUpdateModel model)
+        public async Task<User> Update(UserUpdate model)
         {
             model.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
@@ -86,7 +86,7 @@ namespace recipe_shuffler.Services
             else return false;
         }
 
-        public User ConvertToModel(UserUpdateModel model)
+        public User ConvertToModel(UserUpdate model)
         {
             User user = new();
             

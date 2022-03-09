@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.OData.Query;
 using recipe_shuffler.Data;
 using recipe_shuffler.DTO;
 using recipe_shuffler.Models;
@@ -13,16 +14,17 @@ namespace recipe_shuffler.Services
         {
             _context = context;
         }
-        public List<Recipe> GetList(Guid userId)
+        public IQueryable GetList(ODataQueryOptions<Recipe> queryOptions, Guid userId)
         {
-            List<Recipe> list = _context.Recipes
-                .Where(x => x.UserId == userId)
-                .ToList();
+            IQueryable list = _context.Recipes
+                .Where(x => x.UserId == userId);
+
+            list = queryOptions.ApplyTo(list);
 
             return list;
         }
 
-        public async Task<Recipe> Insert(RecipeInsertModel model)
+        public async Task<Recipe> Insert(RecipeInsert model)
         {
             Recipe recipe = ConvertToModel(model);
             _context.Recipes.Add(recipe);
@@ -31,7 +33,7 @@ namespace recipe_shuffler.Services
             return recipe;
         }
 
-        public async Task<Recipe> Update(RecipeInsertModel model)
+        public async Task<Recipe> Update(RecipeInsert model)
         {
             Recipe recipe = ConvertToModel(model);
             _context.Recipes.Update(recipe);
@@ -69,7 +71,7 @@ namespace recipe_shuffler.Services
             return recipe;
         }
 
-        public Recipe ConvertToModel(RecipeInsertModel model)
+        public Recipe ConvertToModel(RecipeInsert model)
         {
             Recipe recipe = new();
 

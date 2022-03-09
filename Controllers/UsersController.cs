@@ -21,7 +21,7 @@ namespace recipe_shuffler.Controllers
         {
             if (id != Guid.Empty && id != default )
             {
-                IQueryable<UserReturnModel> user = _service.Get(id);
+                IQueryable<UserReturn> user = _service.Get(id);
                 return Ok(user);
             }
             else return BadRequest("Invalid parameters");
@@ -35,7 +35,7 @@ namespace recipe_shuffler.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(UserUpdateModel model)
+        public async Task<IActionResult> Update(UserUpdate model)
         {
             User user = await _service.Update(model);
             return Ok(user);

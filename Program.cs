@@ -5,6 +5,7 @@ using recipe_shuffler.Models;
 using recipe_shuffler.Services;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
+using recipe_shuffler.Services.Tags;
 
 
 // OData
@@ -30,11 +31,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllers().AddOData(opt => opt.AddRouteComponents("v1", GetEdmModel()).Filter().Select().Expand());
+builder.Services.AddControllers().AddOData(opt => opt.AddRouteComponents("v1", GetEdmModel()).Filter().Select().Expand().OrderBy().Count());
 
 // Service Layer
 builder.Services.AddScoped<IRecipesService, RecipesService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddScoped<ITagsService, TagsService>();
 
 // CORS
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";

@@ -1,6 +1,6 @@
 ﻿namespace recipe_shuffler.DTO
 {
-    public class RecipeInsertModel
+    public class RecipeInsert
     {
         public Guid Id { get; set; }
 

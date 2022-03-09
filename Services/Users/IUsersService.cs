@@ -5,11 +5,11 @@ namespace recipe_shuffler.Services
 {
     public interface IUsersService
     {
-        IQueryable<UserReturnModel> Get(Guid id);
+        IQueryable<UserReturn> Get(Guid id);
 
         Task<User> Insert(User user);
 
-        Task<User> Update(UserUpdateModel model);
+        Task<User> Update(UserUpdate model);
 
         User ChangeActive(Guid id);
 

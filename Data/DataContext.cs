@@ -13,5 +13,7 @@ namespace recipe_shuffler.Data
         public DbSet<User> Users { get; set; }
 
         public DbSet<Recipe> Recipes { get; set; }
+
+        public DbSet<Tag> Tags { get; set; }
     }
 }

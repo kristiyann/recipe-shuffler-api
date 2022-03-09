@@ -25,8 +25,8 @@ namespace recipe_shuffler.Controllers
         {
             if (userId != Guid.Empty && userId != default)
             {
-                List<Recipe> list = _service.GetList(userId);
-
+                IQueryable list = _service.GetList(queryOptions, userId);
+                
                 return Ok(list);
             }
             else return BadRequest("Invalid parameters");
@@ -47,13 +47,13 @@ namespace recipe_shuffler.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Insert(RecipeInsertModel model) 
+        public async Task<IActionResult> Insert(RecipeInsert model) 
         { 
             return Ok(await _service.Insert(model));
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(RecipeInsertModel model)
+        public async Task<IActionResult> Update(RecipeInsert model)
         {
             return Ok(await _service.Update(model));
         }
