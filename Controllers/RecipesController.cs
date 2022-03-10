@@ -5,6 +5,7 @@ using recipe_shuffler.Services;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Formatter;
+using recipe_shuffler.DTO.Tags;
 
 namespace recipe_shuffler.Controllers
 {
@@ -56,6 +57,13 @@ namespace recipe_shuffler.Controllers
         public async Task<IActionResult> Update(RecipeInsert model)
         {
             return Ok(await _service.Update(model));
+        }
+
+        [HttpPut]
+        [Route("InsertTag")]
+        public async Task<IActionResult> InsertTag(TagInsertIntoRecipe model)
+        {
+            return Ok(await _service.InsertTag(model));
         }
 
         [HttpDelete]

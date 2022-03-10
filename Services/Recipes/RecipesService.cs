@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.OData.Query;
 using recipe_shuffler.Data;
 using recipe_shuffler.DTO;
+using recipe_shuffler.DTO.Tags;
 using recipe_shuffler.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace recipe_shuffler.Services
 {
@@ -17,7 +19,24 @@ namespace recipe_shuffler.Services
         public IQueryable GetList(ODataQueryOptions<Recipe> queryOptions, Guid userId)
         {
             IQueryable list = _context.Recipes
-                .Where(x => x.UserId == userId);
+                .Where(x => x.UserId == userId)
+                .Select(x => new Recipe() 
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Image = x.Image,
+                    Ingredients = x.Ingredients,
+                    Instructions = x.Instructions,
+                    HasPork = x.HasPork,
+                    HasPoultry = x.HasPoultry,
+                    UserId = x.UserId,
+                    Tags = x.Tags.Select(x => new Tag() 
+                    { 
+                        Id = x.Id,
+                        Name = x.Name,
+                        Color = x.Color
+                    })
+                });
 
             list = queryOptions.ApplyTo(list);
 
@@ -27,7 +46,7 @@ namespace recipe_shuffler.Services
         public async Task<Recipe> Insert(RecipeInsert model)
         {
             Recipe recipe = ConvertToModel(model);
-            _context.Recipes.Add(recipe);
+            await _context.Recipes.AddAsync(recipe);
             await _context.SaveChangesAsync();
 
             return recipe;
@@ -67,6 +86,24 @@ namespace recipe_shuffler.Services
                 .Where(x => x.UserId == userId)
                 .Skip(offset)
                 .FirstOrDefault();
+
+            return recipe;
+        }
+
+        public async Task<Recipe> InsertTag(TagInsertIntoRecipe model) 
+        {
+            Recipe? recipe = _context.Recipes
+                .Where(x => x.Id == model.RecipeId)
+                .Include(x => x.Tags)
+                .FirstOrDefault();
+
+            Tag? tag = _context.Tags
+                .Where(x => x.Id == model.TagId)
+                .FirstOrDefault();
+
+          // TODO  recipe.Tags.Add(tag);
+
+            await _context.SaveChangesAsync();
 
             return recipe;
         }
