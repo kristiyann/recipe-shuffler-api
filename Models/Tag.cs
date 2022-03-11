@@ -18,7 +18,7 @@ namespace recipe_shuffler.Models
         public string? Color { get; set; } = string.Empty;
 
         [JsonIgnore]
-        public IEnumerable<Recipe>? Recipes { get; set; }
+        public HashSet<Recipe>? Recipes { get; set; }
 
         public Guid? UserId { get; set; }
 

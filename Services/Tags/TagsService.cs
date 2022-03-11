@@ -23,6 +23,7 @@ namespace recipe_shuffler.Services.Tags
                     Id = x.Id,
                     Name = x.Name,
                     Color = x.Color,
+                    UserId = x.UserId,
                 });
 
             list = queryOptions.ApplyTo(list);

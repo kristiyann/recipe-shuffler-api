@@ -27,6 +27,6 @@ namespace recipe_shuffler.Models
         [JsonIgnore]
         public User? User { get; set; }
 
-        public IEnumerable<Tag>? Tags { get; set; }
+        public HashSet<Tag>? Tags { get; set; }
     }
 }
