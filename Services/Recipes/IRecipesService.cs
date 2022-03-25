@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.OData.Query;
 using recipe_shuffler.DTO;
+using recipe_shuffler.DTO.Recipes;
 using recipe_shuffler.DTO.Tags;
 using recipe_shuffler.Models;
 
@@ -7,7 +8,7 @@ namespace recipe_shuffler.Services
 {
     public interface IRecipesService
     {
-        IQueryable GetList(ODataQueryOptions<Recipe> queryOptions, Guid userId);
+        IQueryable<RecipeList> GetList(Guid userId);
 
         Task<Recipe> Insert(RecipeInsert recipe);
 
@@ -18,5 +19,7 @@ namespace recipe_shuffler.Services
         Recipe GetRandom(Guid userId);
 
         Task<Recipe> InsertTag(TagInsertIntoRecipe model);
+
+        Task<Recipe> RemoveTag(TagInsertIntoRecipe model);
     }
 }

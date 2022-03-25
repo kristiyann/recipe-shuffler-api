@@ -10,6 +10,7 @@ namespace recipe_shuffler.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class RecipesController : ODataController
     {
         private readonly IRecipesService _service;
@@ -20,12 +21,12 @@ namespace recipe_shuffler.Controllers
         }
 
         [HttpGet]
-        [EnableQuery]
-        public IActionResult GetList(ODataQueryOptions<Recipe> queryOptions, Guid userId) 
+        [EnableQuery()]
+        public IActionResult GetRecipeList(ODataQueryOptions<Recipe> queryOptions, Guid userId) 
         {
             if (userId != Guid.Empty && userId != default)
             {
-                IQueryable list = _service.GetList(queryOptions, userId);
+                IQueryable list = _service.GetList(userId);
                 
                 return Ok(list);
             }
@@ -38,9 +39,7 @@ namespace recipe_shuffler.Controllers
         {
             if (userId != Guid.Empty && userId != default)
             {
-                Recipe? recipe = _service.GetRandom(userId);
-
-                return Ok(recipe);
+                return Ok(_service.GetRandom(userId));
             }
             else return BadRequest("Invalid parameters");
         }
@@ -63,6 +62,13 @@ namespace recipe_shuffler.Controllers
         public async Task<IActionResult> InsertTag(TagInsertIntoRecipe model)
         {
             return Ok(await _service.InsertTag(model));
+        }
+
+        [HttpPut]
+        [Route("RemoveTag")]
+        public async Task<IActionResult> RemoveTag(TagInsertIntoRecipe model)
+        {
+            return Ok(await _service.RemoveTag(model));
         }
 
         [HttpDelete]

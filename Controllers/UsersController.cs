@@ -8,6 +8,7 @@ namespace recipe_shuffler.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class UsersController : Controller
     {
         private readonly IUsersService _service;
@@ -21,7 +22,7 @@ namespace recipe_shuffler.Controllers
         {
             if (id != Guid.Empty && id != default )
             {
-                IQueryable<UserReturn> user = _service.Get(id);
+                IQueryable<UserList> user = _service.Get(id);
                 return Ok(user);
             }
             else return BadRequest("Invalid parameters");
@@ -35,40 +36,32 @@ namespace recipe_shuffler.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(UserUpdate model)
+        public async Task<IActionResult> Update(UserEdit model)
         {
             User user = await _service.Update(model);
             return Ok(user);
         }
 
         [HttpPut]
-        [Route("ChangeActive")]
-        public IActionResult ChangeActive([FromQuery] Guid id)
+        [Route("UpdatePassword")]
+        public async Task<IActionResult> UpdatePassword(UserPasswordEdit model)
         {
-            if (id != Guid.Empty && id != default)
-            {
-                User user = _service.ChangeActive(id);
-                return Ok(user);
-            }
-            else return BadRequest("Invalid parameters");
+            Guid userId = await _service.UpdatePassword(model);
+
+            return Ok(userId);
         }
 
         [HttpGet]
-        [Route("UserAuth")]
+        [Route("Auth")]
         public IActionResult UserAuth(string email, string password)
         {
-            if (email != null && password != null)
-            {
-                bool passwordIsValid = _service.UserAuth(email, password); 
+            Guid userId = _service.UserAuth(email, password); 
 
-                if (passwordIsValid)
-                {
-                    return Ok(passwordIsValid);
-                }
-                else return Unauthorized();
-            }
-            else return BadRequest("Invalid parameters");
+             if (userId != Guid.Empty)
+             {
+                 return Ok(userId);
+             }
+             else return Unauthorized();
         }
-
     }
 }

@@ -16,7 +16,7 @@ namespace recipe_shuffler.Models
 
         public string Password { get; set; } = string.Empty;
 
-        public HashSet<Recipe>? Recipes { get; set; }
+        public IEnumerable<Recipe>? Recipes { get; set; }
 
         public bool Active { get; set; } = true;
     }
