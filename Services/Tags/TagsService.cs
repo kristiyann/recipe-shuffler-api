@@ -14,10 +14,12 @@ namespace recipe_shuffler.Services.Tags
             _context = context;
         }
 
-        public IQueryable GetList(ODataQueryOptions<Tag> queryOptions, Guid userId)
+        public IQueryable<Tag> GetList(Guid userId)
         {
-            IQueryable list = _context.Tags
-                .Where(x => x.UserId == userId)
+            IQueryable<Tag> query = _context.Tags
+                .Where(x => x.UserId == userId);
+            
+            IQueryable<Tag> list = query
                 .Select(x => new Tag()
                 {
                     Id = x.Id,
@@ -26,7 +28,7 @@ namespace recipe_shuffler.Services.Tags
                     UserId = x.UserId,
                 });
 
-            list = queryOptions.ApplyTo(list);
+            // list = queryOptions.ApplyTo(list);
 
             return list;
         }
@@ -68,6 +70,13 @@ namespace recipe_shuffler.Services.Tags
             tag.Name = model.Name;
             tag.Color = model.Color;
             tag.User = _context.Users.Find(model.UserId);
+
+            return tag;
+        }
+
+        public async Task<Tag> GetById(Guid id)
+        {
+            Tag tag = await _context.Tags.FindAsync(id);
 
             return tag;
         }

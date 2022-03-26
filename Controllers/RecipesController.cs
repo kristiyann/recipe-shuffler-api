@@ -10,7 +10,7 @@ namespace recipe_shuffler.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+    // [ApiExplorerSettings(IgnoreApi = true)]
     public class RecipesController : ODataController
     {
         private readonly IRecipesService _service;
@@ -72,11 +72,11 @@ namespace recipe_shuffler.Controllers
         }
 
         [HttpDelete]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id != Guid.Empty && id != default)
             {
-                return Ok(_service.Delete(id));
+                return Ok(await _service.Delete(id));
             }
             else return BadRequest("Invalid parameters");
         }

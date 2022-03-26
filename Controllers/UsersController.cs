@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using recipe_shuffler.Data;
 using recipe_shuffler.DTO.Users;
 using recipe_shuffler.Models;
 using recipe_shuffler.Services;

@@ -6,12 +6,14 @@ using recipe_shuffler.DTO;
 using recipe_shuffler.DTO.Recipes;
 using recipe_shuffler.DTO.Tags;
 using recipe_shuffler.Models;
+using recipe_shuffler.Services.Tags;
 
 namespace recipe_shuffler.Services
 {
     public class RecipesService : IRecipesService
     {
         private readonly DataContext _context;
+        private readonly ITagsService _tagsService;
 
         public RecipesService(DataContext context)
         {
@@ -97,10 +99,9 @@ namespace recipe_shuffler.Services
                 .Include(x => x.Tags)
                 .FirstOrDefault();
 
-            Tag tag = await _context.Tags.FindAsync(model.TagId);
+            Tag tag = await _tagsService.GetById(model.TagId);
 
             recipe.Tags.Add(tag);
-
             await _context.SaveChangesAsync();
 
             return recipe;
@@ -113,10 +114,9 @@ namespace recipe_shuffler.Services
                 .Include(x => x.Tags)
                 .FirstOrDefault();
 
-            Tag tag = await _context.Tags.FindAsync(model.TagId);
+            Tag tag = await _tagsService.GetById(model.TagId);
 
             recipe.Tags.Remove(tag);
-
             await _context.SaveChangesAsync();
 
             return recipe;
@@ -138,19 +138,34 @@ namespace recipe_shuffler.Services
             return recipe;
         }
 
-        //public RecipeList ConvertFromModelToRecipeList(Recipe recipe)
-        //{
-        //    RecipeList list = new();
+        public RecipeList ConvertFromModelToRecipeList(Recipe recipe)
+        {
+            RecipeList list = new();
 
-        //    list.Id = recipe.Id;
-        //    list.Title = recipe.Title;
-        //    list.Instructions = recipe.Instructions;
-        //    list.Image = recipe.Image;
-        //    list.Ingredients = recipe.Ingredients;
-        //    list.HasPork = recipe.HasPork;
-        //    list.HasPoultry = recipe.HasPoultry;
-        
-        //    return list;
-        //}
+            list.Id = recipe.Id;
+            list.Title = recipe.Title;
+            list.Instructions = recipe.Instructions;
+            list.Image = recipe.Image;
+            list.Ingredients = recipe.Ingredients;
+            list.HasPork = recipe.HasPork;
+            list.HasPoultry = recipe.HasPoultry;
+
+            if (recipe.Tags.ToList().Any())
+            {
+                list.Tags = recipe.Tags
+                    .Select(x => new TagList()
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Color = x.Color
+                    });
+            }
+            else 
+            { 
+                list.Tags = new List<TagList>();
+            }
+
+            return list;
+        }
     }
 }

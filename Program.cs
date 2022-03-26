@@ -13,7 +13,6 @@ static IEdmModel GetEdmModel()
 {
     ODataConventionModelBuilder builder = new();
     builder.EntitySet<Recipe>("Recipes");
-    builder.EntitySet<User>("Users");
     return builder.GetEdmModel();
 }
 

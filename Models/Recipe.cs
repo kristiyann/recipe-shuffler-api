@@ -18,8 +18,10 @@ namespace recipe_shuffler.Models
 
         public string? Instructions { get; set; } = string.Empty;
 
+        // TODO Deprecate
         public bool HasPoultry { get; set; }
 
+        // TODO Deprecate
         public bool HasPork { get; set; }
 
         public Guid? UserId { get; set; }

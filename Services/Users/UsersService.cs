@@ -78,9 +78,9 @@ namespace recipe_shuffler.Services
         public Guid UserAuth(string email, string password)
         {
              User? user = _context.Users
-            .Where(x => x.Email == email)
-            .Where(x => x.Active)
-            .FirstOrDefault();
+                .Where(x => x.Email == email)
+                .Where(x => x.Active)
+                .FirstOrDefault();
 
             if (user != null)
             {

@@ -19,12 +19,12 @@ namespace recipe_shuffler.Controllers
         }
 
         [HttpGet]
-        [EnableQuery]
-        public IActionResult GetList(ODataQueryOptions<Tag> queryOptions, Guid userId)
+        // [EnableQuery]
+        public IActionResult GetTagList(Guid userId)
         {
             if (userId != Guid.Empty && userId != default)
             {
-                IQueryable list = _service.GetList(queryOptions, userId);
+                IQueryable list = _service.GetList(userId);
 
                 return Ok(list);
             }
@@ -44,11 +44,11 @@ namespace recipe_shuffler.Controllers
         }
 
         [HttpDelete]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             if (id != Guid.Empty && id != default)
             {
-                return Ok(_service.Delete(id));
+                return Ok(await _service.Delete(id));
             }
             else return BadRequest("Invalid parameters");
         }
