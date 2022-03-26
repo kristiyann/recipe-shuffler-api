@@ -10,7 +10,7 @@ namespace recipe_shuffler.Models
         [Key]
         public Guid Id { get; set; }
 
-        public string? Title { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
 
         public string? Image { get; set; } = string.Empty;
 
@@ -24,10 +24,10 @@ namespace recipe_shuffler.Models
         // TODO Deprecate
         public bool HasPork { get; set; }
 
-        public Guid? UserId { get; set; }
+        public Guid UserId { get; set; }
 
         [JsonIgnore]
-        public User? User { get; set; }
+        public User User { get; set; }
 
         public HashSet<Tag>? Tags { get; set; }
     }

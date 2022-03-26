@@ -20,9 +20,9 @@ namespace recipe_shuffler.Models
         [JsonIgnore]
         public HashSet<Recipe>? Recipes { get; set; }
 
-        public Guid? UserId { get; set; }
+        public Guid UserId { get; set; }
 
         [JsonIgnore]
-        public User? User { get; set; }
+        public User User { get; set; }
     }
 }
