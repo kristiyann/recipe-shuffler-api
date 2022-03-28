@@ -14,10 +14,6 @@ namespace recipe_shuffler.DTO.Recipes
 
         public string? Instructions { get; set; } = string.Empty;
 
-        public bool HasPoultry { get; set; }
-
-        public bool HasPork { get; set; }
-
         public IEnumerable<TagList>? Tags { get; set; }
     }
 }

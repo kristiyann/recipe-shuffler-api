@@ -12,10 +12,6 @@
 
         public string? Instructions { get; set; } = string.Empty;
 
-        public bool HasPoultry { get; set; }
-
-        public bool HasPork { get; set; }
-
         public Guid? UserId { get; set; }
     }
 }

@@ -32,25 +32,23 @@ namespace recipe_shuffler.Services
                         Image = z.Image,
                         Ingredients = z.Ingredients,
                         Instructions = z.Instructions,
-                        HasPork = z.HasPork,
-                        HasPoultry = z.HasPoultry,
                     }),
                 });
 
             return user;
         }
 
-        public async Task<User> Insert(User user)
+        public async Task<Guid> Insert(User user)
         {
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return user;
+            return user.Id;
         }
 
-        public async Task<User> Update(UserEdit model)
+        public async Task<Guid> Update(UserEdit model)
         {
             model.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
@@ -58,7 +56,7 @@ namespace recipe_shuffler.Services
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
 
-            return user;
+            return user.Id;
         }
 
         public async Task<Guid> UpdatePassword(UserPasswordEdit model)
@@ -78,9 +76,8 @@ namespace recipe_shuffler.Services
         public Guid UserAuth(string email, string password)
         {
              User? user = _context.Users
-                .Where(x => x.Email == email)
-                .Where(x => x.Active)
-                .FirstOrDefault();
+                 .Where(x => x.Email == email)
+                 .FirstOrDefault(x => x.Active);
 
             if (user != null)
             {
@@ -93,14 +90,15 @@ namespace recipe_shuffler.Services
             else return Guid.Empty;
         }
 
-        public User ConvertToModel(UserEdit model)
+        private User ConvertToModel(UserEdit model)
         {
-            User user = new();
-            
-            user.Id = model.Id;
-            user.Username = model.Username;
-            user.Password = model.Password;
-            user.Email = model.Email;
+            User user = new()
+            {
+                Id = model.Id,
+                Username = model.Username,
+                Password = model.Password,
+                Email = model.Email
+            };
 
             return user;
         }

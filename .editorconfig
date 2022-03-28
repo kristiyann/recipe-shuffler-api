@@ -20,3 +20,6 @@ dotnet_diagnostic.CS8604.severity = none
 
 # IDE0055: Fix formatting
 dotnet_diagnostic.IDE0055.severity = none
+
+# CS8601: Possible null reference assignment.
+dotnet_diagnostic.CS8601.severity = none

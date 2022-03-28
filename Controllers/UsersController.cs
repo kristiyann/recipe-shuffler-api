@@ -16,39 +16,43 @@ namespace recipe_shuffler.Controllers
             _service = service;
         }
 
-        [HttpGet]
-        public IActionResult Get(Guid id)
-        {
-            if (id != Guid.Empty && id != default )
-            {
-                IQueryable<UserList> user = _service.Get(id);
-                return Ok(user);
-            }
-            else return BadRequest("Invalid parameters");
-        }
+        // [HttpGet]
+                    // public IActionResult Get(Guid id)
+                    // {
+                    //     if (id != Guid.Empty && id != default )
+                    //     {
+                    //         IQueryable<UserList> user = _service.Get(id);
+                    //         return Ok(user);
+                    //     }
+                    //     else return BadRequest("Invalid parameters");
+                    // }
 
         [HttpPost]
         public async Task<IActionResult> Insert(User model)
         {
-            User user = await _service.Insert(model);
-            return Ok(user);
+            Guid userId = await _service.Insert(model);
+            return Ok(userId);
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(UserEdit model)
         {
-            User user = await _service.Update(model);
-            return Ok(user);
-        }
-
-        [HttpPut]
-        [Route("UpdatePassword")]
-        public async Task<IActionResult> UpdatePassword(UserPasswordEdit model)
-        {
-            Guid userId = await _service.UpdatePassword(model);
-
+            Guid userId = await _service.Update(model);
             return Ok(userId);
         }
+
+        // [HttpPut]
+        // [Route("UpdatePassword")]
+        // public async Task<IActionResult> UpdatePassword(UserPasswordEdit model)
+        // {
+        //     Guid userId = await _service.UpdatePassword(model);
+        //
+        //     if (userId != Guid.Empty)
+        //     {
+        //         return Ok(userId);
+        //     }
+        //     else return NotFound();
+        // }
 
         [HttpGet]
         [Route("Auth")]

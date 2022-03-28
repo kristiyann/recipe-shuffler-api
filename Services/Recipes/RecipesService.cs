@@ -1,6 +1,4 @@
-﻿
-using Microsoft.AspNetCore.OData.Query;
-using Microsoft.EntityFrameworkCore; // Include
+﻿using Microsoft.EntityFrameworkCore; // Include
 using recipe_shuffler.Data;
 using recipe_shuffler.DTO;
 using recipe_shuffler.DTO.Recipes;
@@ -14,10 +12,11 @@ namespace recipe_shuffler.Services
     {
         private readonly DataContext _context;
         private readonly ITagsService _tagsService;
-
-        public RecipesService(DataContext context)
+        
+        public RecipesService(DataContext context, ITagsService tagsService)
         {
             _context = context;
+            _tagsService = tagsService;
         }
         public IQueryable<RecipeList> GetList(Guid userId)
         {
@@ -30,14 +29,12 @@ namespace recipe_shuffler.Services
                     Image = x.Image,
                     Ingredients = x.Ingredients,
                     Instructions = x.Instructions,
-                    HasPork = x.HasPork,
-                    HasPoultry = x.HasPoultry,
                     Tags = x.Tags
-                    .Select(x => new TagList()
+                    .Select(y => new TagList()
                     {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Color = x.Color
+                        Id = y.Id,
+                        Name = y.Name,
+                        Color = y.Color
                     })
                 });
 
@@ -122,50 +119,49 @@ namespace recipe_shuffler.Services
             return recipe;
         }
 
-        public Recipe ConvertToModel(RecipeInsert model)
+        private Recipe ConvertToModel(RecipeInsert model)
         {
-            Recipe recipe = new();
-
-            recipe.Id = model.Id;
-            recipe.Title = model.Title;
-            recipe.Image = model.Image;
-            recipe.HasPork = model.HasPork;
-            recipe.HasPoultry = model.HasPoultry;
-            recipe.Instructions = model.Instructions;
-            recipe.Ingredients = model.Ingredients;
-            recipe.User = _context.Users.Find(model.UserId);
+            Recipe recipe = new()
+            {
+                Id = model.Id,
+                Title = model.Title,
+                Image = model.Image,
+                Instructions = model.Instructions,
+                Ingredients = model.Ingredients,
+                User = _context.Users.Find(model.UserId)
+            };
 
             return recipe;
         }
 
-        public RecipeList ConvertFromModelToRecipeList(Recipe recipe)
-        {
-            RecipeList list = new();
+        //public RecipeList ConvertFromModelToRecipeList(Recipe recipe)
+        //{
+        //    RecipeList list = new();
 
-            list.Id = recipe.Id;
-            list.Title = recipe.Title;
-            list.Instructions = recipe.Instructions;
-            list.Image = recipe.Image;
-            list.Ingredients = recipe.Ingredients;
-            list.HasPork = recipe.HasPork;
-            list.HasPoultry = recipe.HasPoultry;
+        //    list.Id = recipe.Id;
+        //    list.Title = recipe.Title;
+        //    list.Instructions = recipe.Instructions;
+        //    list.Image = recipe.Image;
+        //    list.Ingredients = recipe.Ingredients;
+        //    list.HasPork = recipe.HasPork;
+        //    list.HasPoultry = recipe.HasPoultry;
 
-            if (recipe.Tags.ToList().Any())
-            {
-                list.Tags = recipe.Tags
-                    .Select(x => new TagList()
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Color = x.Color
-                    });
-            }
-            else 
-            { 
-                list.Tags = new List<TagList>();
-            }
+        //    if (recipe.Tags.ToList().Any())
+        //    {
+        //        list.Tags = recipe.Tags
+        //            .Select(x => new TagList()
+        //            {
+        //                Id = x.Id,
+        //                Name = x.Name,
+        //                Color = x.Color
+        //            });
+        //    }
+        //    else 
+        //    { 
+        //        list.Tags = new List<TagList>();
+        //    }
 
-            return list;
-        }
+        //    return list;
+        //}
     }
 }

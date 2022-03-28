@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using recipe_shuffler.DTO.Tags;
-using recipe_shuffler.Models;
 using recipe_shuffler.Services.Tags;
 
 namespace recipe_shuffler.Controllers

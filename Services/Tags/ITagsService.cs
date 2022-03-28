@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.OData.Query;
-using recipe_shuffler.DTO.Tags;
+﻿using recipe_shuffler.DTO.Tags;
 using recipe_shuffler.Models;
 
 namespace recipe_shuffler.Services.Tags

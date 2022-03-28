@@ -1,5 +1,4 @@
-﻿using recipe_shuffler.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace recipe_shuffler.DTO.Tags
 {

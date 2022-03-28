@@ -7,9 +7,9 @@ namespace recipe_shuffler.Services
     {
         IQueryable<UserList> Get(Guid id);
 
-        Task<User> Insert(User user);
+        Task<Guid> Insert(User user);
 
-        Task<User> Update(UserEdit model);
+        Task<Guid> Update(UserEdit model);
 
         //Task<User> ChangeActive(Guid id);
 
