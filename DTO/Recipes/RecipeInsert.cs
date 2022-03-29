@@ -2,8 +2,6 @@
 {
     public class RecipeInsert
     {
-        public Guid Id { get; set; }
-
         public string? Title { get; set; } = string.Empty;
 
         public string? Image { get; set; } = string.Empty;
@@ -12,6 +10,6 @@
 
         public string? Instructions { get; set; } = string.Empty;
 
-        public Guid? UserId { get; set; }
+        public Guid UserId { get; set; }
     }
 }
