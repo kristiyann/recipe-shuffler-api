@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace recipe_shuffler.DTO.Tags
+﻿namespace recipe_shuffler.DTO.Tags
 {
     public class TagInsertIntoRecipe
     {

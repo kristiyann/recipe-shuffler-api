@@ -13,7 +13,6 @@ static IEdmModel GetEdmModel()
 {
     ODataConventionModelBuilder builder = new();
     builder.EntitySet<Recipe>("Recipes");
-    builder.EntitySet<User>("Users");
     return builder.GetEdmModel();
 }
 
@@ -31,7 +30,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllers().AddOData(opt => opt.AddRouteComponents("v1", GetEdmModel()).Filter().Select().Expand().OrderBy().Count());
+builder.Services.AddControllers().AddOData(opt => opt.AddRouteComponents("api/", GetEdmModel()).Filter().Select().Expand().OrderBy().Count().SetMaxTop(null));
 
 // Service Layer
 builder.Services.AddScoped<IRecipesService, RecipesService>();
@@ -46,7 +45,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       builder =>
                       {
-                          builder.WithOrigins("http://localhost:4200");
+                          builder.WithOrigins("*")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
                       });
 });
 

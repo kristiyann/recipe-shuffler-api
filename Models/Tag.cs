@@ -18,11 +18,11 @@ namespace recipe_shuffler.Models
         public string? Color { get; set; } = string.Empty;
 
         [JsonIgnore]
-        public IEnumerable<Recipe>? Recipes { get; set; }
+        public HashSet<Recipe>? Recipes { get; set; }
 
-        public Guid? UserId { get; set; }
+        public Guid UserId { get; set; }
 
         [JsonIgnore]
-        public User? User { get; set; }
+        public User User { get; set; }
     }
 }

@@ -14,13 +14,13 @@ namespace recipe_shuffler.Services
             _context = context;
         }
 
-        public IQueryable<UserReturn> Get(Guid id)
+        public IQueryable<UserList> Get(Guid id)
         {
-            IQueryable<UserReturn> user = _context.Users
+            IQueryable<UserList> user = _context.Users
                 .Where(x => x.Id == id)
-                .Where(x => x.Active == true)
+                .Where(x => x.Active)
                 .Include(x => x.Recipes)
-                .Select(x => new UserReturn()
+                .Select(x => new UserList()
                 {
                     Id = x.Id,
                     Username = x.Username,
@@ -32,25 +32,23 @@ namespace recipe_shuffler.Services
                         Image = z.Image,
                         Ingredients = z.Ingredients,
                         Instructions = z.Instructions,
-                        HasPork = z.HasPork,
-                        HasPoultry = z.HasPoultry,
                     }),
                 });
 
             return user;
         }
 
-        public async Task<User> Insert(User user)
+        public async Task<Guid> Insert(User user)
         {
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return user;
+            return user.Id;
         }
 
-        public async Task<User> Update(UserUpdate model)
+        public async Task<Guid> Update(UserEdit model)
         {
             model.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
@@ -58,42 +56,49 @@ namespace recipe_shuffler.Services
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
 
-            return user;
+            return user.Id;
         }
 
-        public User ChangeActive(Guid id)
+        public async Task<Guid> UpdatePassword(UserPasswordEdit model)
         {
-            User? user = _context.Users.FirstOrDefault(x => x.Id == id);
+            User user = _context.Users
+                .FirstOrDefault(x => x.Id == model.Id);
 
-            if (user != null)
-            {
-                user.Active = !user.Active;
-            }
+            model.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            user.Password = model.Password;
 
-            return user;
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+
+            return user.Id;
         }
 
-        public bool UserAuth(String email, String password)
+        public Guid UserAuth(string email, string password)
         {
              User? user = _context.Users
-            .Where(x => x.Email == email)
-            .FirstOrDefault();
+                 .Where(x => x.Email == email)
+                 .FirstOrDefault(x => x.Active);
 
             if (user != null)
             {
-                return BCrypt.Net.BCrypt.Verify(password, user.Password);
+                if (BCrypt.Net.BCrypt.Verify(password, user.Password))
+                {
+                    return user.Id;
+                }
+                else return Guid.Empty;
             }
-            else return false;
+            else return Guid.Empty;
         }
 
-        public User ConvertToModel(UserUpdate model)
+        private User ConvertToModel(UserEdit model)
         {
-            User user = new();
-            
-            user.Id = model.Id;
-            user.Username = model.Username;
-            user.Password = model.Password;
-            user.Email = model.Email;
+            User user = new()
+            {
+                Id = model.Id,
+                Username = model.Username,
+                Password = model.Password,
+                Email = model.Email
+            };
 
             return user;
         }

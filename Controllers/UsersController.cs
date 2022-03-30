@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using recipe_shuffler.Data;
 using recipe_shuffler.DTO.Users;
 using recipe_shuffler.Models;
 using recipe_shuffler.Services;
@@ -8,6 +7,7 @@ namespace recipe_shuffler.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class UsersController : Controller
     {
         private readonly IUsersService _service;
@@ -16,59 +16,55 @@ namespace recipe_shuffler.Controllers
             _service = service;
         }
 
-        [HttpGet]
-        public IActionResult Get(Guid id)
-        {
-            if (id != Guid.Empty && id != default )
-            {
-                IQueryable<UserReturn> user = _service.Get(id);
-                return Ok(user);
-            }
-            else return BadRequest("Invalid parameters");
-        }
+        // [HttpGet]
+                    // public IActionResult Get(Guid id)
+                    // {
+                    //     if (id != Guid.Empty && id != default )
+                    //     {
+                    //         IQueryable<UserList> user = _service.Get(id);
+                    //         return Ok(user);
+                    //     }
+                    //     else return BadRequest("Invalid parameters");
+                    // }
 
         [HttpPost]
         public async Task<IActionResult> Insert(User model)
         {
-            User user = await _service.Insert(model);
-            return Ok(user);
+            Guid userId = await _service.Insert(model);
+            return Ok(userId);
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(UserUpdate model)
+        public async Task<IActionResult> Update(UserEdit model)
         {
-            User user = await _service.Update(model);
-            return Ok(user);
+            Guid userId = await _service.Update(model);
+            return Ok(userId);
         }
 
-        [HttpPut]
-        [Route("ChangeActive")]
-        public IActionResult ChangeActive([FromQuery] Guid id)
-        {
-            if (id != Guid.Empty && id != default)
-            {
-                User user = _service.ChangeActive(id);
-                return Ok(user);
-            }
-            else return BadRequest("Invalid parameters");
-        }
+        // [HttpPut]
+        // [Route("UpdatePassword")]
+        // public async Task<IActionResult> UpdatePassword(UserPasswordEdit model)
+        // {
+        //     Guid userId = await _service.UpdatePassword(model);
+        //
+        //     if (userId != Guid.Empty)
+        //     {
+        //         return Ok(userId);
+        //     }
+        //     else return NotFound();
+        // }
 
         [HttpGet]
-        [Route("UserAuth")]
+        [Route("Auth")]
         public IActionResult UserAuth(string email, string password)
         {
-            if (email != null && password != null)
-            {
-                bool passwordIsValid = _service.UserAuth(email, password); 
+            Guid userId = _service.UserAuth(email, password); 
 
-                if (passwordIsValid)
-                {
-                    return Ok(passwordIsValid);
-                }
-                else return Unauthorized();
-            }
-            else return BadRequest("Invalid parameters");
+             if (userId != Guid.Empty)
+             {
+                 return Ok(userId);
+             }
+             else return Unauthorized();
         }
-
     }
 }

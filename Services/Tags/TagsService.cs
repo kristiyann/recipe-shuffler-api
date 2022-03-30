@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.OData.Query;
-using recipe_shuffler.Data;
+﻿using recipe_shuffler.Data;
 using recipe_shuffler.DTO.Tags;
 using recipe_shuffler.Models;
 
@@ -14,18 +13,21 @@ namespace recipe_shuffler.Services.Tags
             _context = context;
         }
 
-        public IQueryable GetList(ODataQueryOptions<Tag> queryOptions, Guid userId)
+        public IQueryable<Tag> GetList(Guid userId)
         {
-            IQueryable list = _context.Tags
-                .Where(x => x.UserId == userId)
+            IQueryable<Tag> query = _context.Tags
+                .Where(x => x.UserId == userId);
+            
+            IQueryable<Tag> list = query
                 .Select(x => new Tag()
                 {
                     Id = x.Id,
                     Name = x.Name,
                     Color = x.Color,
+                    UserId = x.UserId,
                 });
 
-            list = queryOptions.ApplyTo(list);
+            // list = queryOptions.ApplyTo(list);
 
             return list;
         }
@@ -59,14 +61,22 @@ namespace recipe_shuffler.Services.Tags
             return tag;
         }
 
-        public Tag ConvertToModel(TagInsert model)
+        private Tag ConvertToModel(TagInsert model)
         {
-            Tag tag = new();
+            Tag tag = new()
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Color = model.Color,
+                User = _context.Users.Find(model.UserId)
+            };
 
-            tag.Id = model.Id;
-            tag.Name = model.Name;
-            tag.Color = model.Color;
-            tag.User = _context.Users.Find(model.UserId);
+            return tag;
+        }
+
+        public async Task<Tag> GetById(Guid id)
+        {
+            Tag tag = await _context.Tags.FindAsync(id);
 
             return tag;
         }

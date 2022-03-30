@@ -1,44 +1,42 @@
-﻿
-using Microsoft.AspNetCore.OData.Query;
+﻿using Microsoft.EntityFrameworkCore; // Include
 using recipe_shuffler.Data;
 using recipe_shuffler.DTO;
+using recipe_shuffler.DTO.Recipes;
 using recipe_shuffler.DTO.Tags;
 using recipe_shuffler.Models;
-using Microsoft.EntityFrameworkCore;
+using recipe_shuffler.Services.Tags;
 
 namespace recipe_shuffler.Services
 {
     public class RecipesService : IRecipesService
     {
         private readonly DataContext _context;
-
-        public RecipesService(DataContext context)
+        private readonly ITagsService _tagsService;
+        
+        public RecipesService(DataContext context, ITagsService tagsService)
         {
             _context = context;
+            _tagsService = tagsService;
         }
-        public IQueryable GetList(ODataQueryOptions<Recipe> queryOptions, Guid userId)
+        public IQueryable<RecipeList> GetList(Guid userId)
         {
-            IQueryable list = _context.Recipes
+            IQueryable<RecipeList> list = _context.Recipes
                 .Where(x => x.UserId == userId)
-                .Select(x => new Recipe() 
+                .Select(x => new RecipeList()
                 {
                     Id = x.Id,
                     Title = x.Title,
                     Image = x.Image,
                     Ingredients = x.Ingredients,
                     Instructions = x.Instructions,
-                    HasPork = x.HasPork,
-                    HasPoultry = x.HasPoultry,
-                    UserId = x.UserId,
-                    Tags = x.Tags.Select(x => new Tag() 
-                    { 
-                        Id = x.Id,
-                        Name = x.Name,
-                        Color = x.Color
+                    Tags = x.Tags
+                    .Select(y => new TagList()
+                    {
+                        Id = y.Id,
+                        Name = y.Name,
+                        Color = y.Color
                     })
                 });
-
-            list = queryOptions.ApplyTo(list);
 
             return list;
         }
@@ -46,6 +44,7 @@ namespace recipe_shuffler.Services
         public async Task<Recipe> Insert(RecipeInsert model)
         {
             Recipe recipe = ConvertToModel(model);
+
             await _context.Recipes.AddAsync(recipe);
             await _context.SaveChangesAsync();
 
@@ -66,7 +65,6 @@ namespace recipe_shuffler.Services
             Recipe? recipe = _context.Recipes.FirstOrDefault(x => x.Id == id);
 
             _context.Remove(recipe);
-
             await _context.SaveChangesAsync();
 
             return recipe;
@@ -84,44 +82,86 @@ namespace recipe_shuffler.Services
 
             Recipe? recipe = _context.Recipes
                 .Where(x => x.UserId == userId)
+                .Include(x => x.Tags)
                 .Skip(offset)
                 .FirstOrDefault();
 
             return recipe;
         }
 
-        public async Task<Recipe> InsertTag(TagInsertIntoRecipe model) 
+        public async Task<Recipe> InsertTag(TagInsertIntoRecipe model)
         {
-            Recipe? recipe = _context.Recipes
+            Recipe recipe = _context.Recipes
                 .Where(x => x.Id == model.RecipeId)
                 .Include(x => x.Tags)
                 .FirstOrDefault();
 
-            Tag? tag = _context.Tags
-                .Where(x => x.Id == model.TagId)
-                .FirstOrDefault();
+            Tag tag = await _tagsService.GetById(model.TagId);
 
-          // TODO  recipe.Tags.Add(tag);
-
+            recipe.Tags.Add(tag);
             await _context.SaveChangesAsync();
 
             return recipe;
         }
 
-        public Recipe ConvertToModel(RecipeInsert model)
+        public async Task<Recipe> RemoveTag(TagInsertIntoRecipe model)
         {
-            Recipe recipe = new();
+            Recipe recipe = _context.Recipes
+                .Where(x => x.Id == model.RecipeId)
+                .Include(x => x.Tags)
+                .FirstOrDefault();
 
-            recipe.Id = model.Id;
-            recipe.Title = model.Title;
-            recipe.Image = model.Image;
-            recipe.HasPork = model.HasPork;
-            recipe.HasPoultry = model.HasPoultry;
-            recipe.Instructions = model.Instructions;
-            recipe.Ingredients = model.Ingredients;
-            recipe.User = _context.Users.Find(model.UserId);
+            Tag tag = await _tagsService.GetById(model.TagId);
+
+            recipe.Tags.Remove(tag);
+            await _context.SaveChangesAsync();
 
             return recipe;
         }
+
+        private Recipe ConvertToModel(RecipeInsert model)
+        {
+            Recipe recipe = new()
+            {
+                Id = model.Id,
+                Title = model.Title,
+                Image = model.Image,
+                Instructions = model.Instructions,
+                Ingredients = model.Ingredients,
+                User = _context.Users.Find(model.UserId)
+            };
+
+            return recipe;
+        }
+
+        //public RecipeList ConvertFromModelToRecipeList(Recipe recipe)
+        //{
+        //    RecipeList list = new();
+
+        //    list.Id = recipe.Id;
+        //    list.Title = recipe.Title;
+        //    list.Instructions = recipe.Instructions;
+        //    list.Image = recipe.Image;
+        //    list.Ingredients = recipe.Ingredients;
+        //    list.HasPork = recipe.HasPork;
+        //    list.HasPoultry = recipe.HasPoultry;
+
+        //    if (recipe.Tags.ToList().Any())
+        //    {
+        //        list.Tags = recipe.Tags
+        //            .Select(x => new TagList()
+        //            {
+        //                Id = x.Id,
+        //                Name = x.Name,
+        //                Color = x.Color
+        //            });
+        //    }
+        //    else 
+        //    { 
+        //        list.Tags = new List<TagList>();
+        //    }
+
+        //    return list;
+        //}
     }
 }

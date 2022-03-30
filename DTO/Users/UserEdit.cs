@@ -1,8 +1,6 @@
-﻿using recipe_shuffler.Models;
-
-namespace recipe_shuffler.DTO.Users
+﻿namespace recipe_shuffler.DTO.Users
 {
-    public class UserReturn
+    public class UserEdit
     {
         public Guid Id { get; set; }
 
@@ -10,6 +8,6 @@ namespace recipe_shuffler.DTO.Users
 
         public string Email { get; set; } = string.Empty;
 
-        public IEnumerable<Recipe>? Recipes { get; set; }
+        public string Password { get; set; } = string.Empty;
     }
 }
