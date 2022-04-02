@@ -5,6 +5,7 @@ using recipe_shuffler.DTO.Recipes;
 using recipe_shuffler.DTO.Tags;
 using recipe_shuffler.Models;
 using recipe_shuffler.Services.Tags;
+using System.Reflection;
 
 namespace recipe_shuffler.Services
 {
@@ -43,7 +44,19 @@ namespace recipe_shuffler.Services
 
         public async Task<Recipe> Insert(RecipeInsert model)
         {
-            Recipe recipe = ConvertToModel(model);
+            Recipe recipe = ConvertInsertModelToDbObj(model);
+
+            if (model != null && model.TagIds != null)
+            {
+                List<Tag> tags = await _context.Tags
+                    .Where(x => model.TagIds.Any(f => f == x.Id))
+                    .ToListAsync();
+
+                foreach (Tag tagObject in tags)
+                {
+                    recipe.Tags.Add(tagObject);
+                }
+            }
 
             await _context.Recipes.AddAsync(recipe);
             await _context.SaveChangesAsync();
@@ -51,9 +64,27 @@ namespace recipe_shuffler.Services
             return recipe;
         }
 
-        public async Task<Recipe> Update(RecipeInsert model)
+        public async Task<Recipe> Update(RecipeEdit model)
         {
-            Recipe recipe = ConvertToModel(model);
+            Recipe recipe = new();
+
+            if (model != null && model.TagIds != null)
+            {
+                recipe = _context.Recipes
+                .Include(x => x.Tags)
+                .Include(x => x.User)
+                .Single(x => x.Id == model.Id);
+
+                List<Tag> tags = await _context.Tags
+                    .Where(x => model.TagIds.Any(f => f == x.Id))
+                    .ToListAsync();
+
+                recipe = CustomUpdate(recipe, model, tags);
+            }
+            else {
+                recipe = await ConvertEditModelToDbObj(model);
+            }
+
             _context.Recipes.Update(recipe);
             await _context.SaveChangesAsync();
 
@@ -119,7 +150,61 @@ namespace recipe_shuffler.Services
             return recipe;
         }
 
-        private Recipe ConvertToModel(RecipeInsert model)
+        private static Recipe CustomUpdate(Recipe recipe, RecipeEdit model, List<Tag> tags)
+        {
+            foreach (Tag tag in recipe.Tags.ToList())
+            {
+                if (!tags.Contains(tag))
+                {
+                    recipe.Tags.Remove(tag);
+                }
+            }
+
+            foreach (Tag tag in tags)
+            {
+                if (!recipe.Tags.Any(t => t.Id == tag.Id))
+                {
+                    recipe.Tags.Add(tag);
+                }
+            }
+
+            if (recipe.Title != model.Title)
+            {
+                recipe.Title = model.Title;
+            }
+            if (recipe.Instructions != model.Instructions)
+            {
+                recipe.Instructions = model.Instructions;
+            }
+            if (recipe.Image != model.Image)
+            {
+                recipe.Image = model.Image;
+            }
+            if (recipe.Ingredients != model.Ingredients)
+            {
+                recipe.Ingredients = model.Ingredients;
+            }
+
+            return recipe;
+        }
+
+        //#region Converters
+        private Recipe ConvertInsertModelToDbObj(RecipeInsert model)
+        {
+            Recipe recipe = new()
+            {
+                Title = model.Title,
+                Image = model.Image,
+                Instructions = model.Instructions,
+                Ingredients = model.Ingredients,
+                User = _context.Users.Find(model.UserId),
+                Tags = new HashSet<Tag>()
+            };
+
+            return recipe;
+        }
+
+        private async Task<Recipe> ConvertEditModelToDbObj(RecipeEdit model)
         {
             Recipe recipe = new()
             {
@@ -128,40 +213,18 @@ namespace recipe_shuffler.Services
                 Image = model.Image,
                 Instructions = model.Instructions,
                 Ingredients = model.Ingredients,
-                User = _context.Users.Find(model.UserId)
+                // UserId = model.UserId,
+                User = await _context.Users.FindAsync(model.UserId)
             };
+
+            //if (model.TagIds != null)
+            //{
+            //    recipe.Tags = new HashSet<Tag>();
+            //}
 
             return recipe;
         }
 
-        //public RecipeList ConvertFromModelToRecipeList(Recipe recipe)
-        //{
-        //    RecipeList list = new();
-
-        //    list.Id = recipe.Id;
-        //    list.Title = recipe.Title;
-        //    list.Instructions = recipe.Instructions;
-        //    list.Image = recipe.Image;
-        //    list.Ingredients = recipe.Ingredients;
-        //    list.HasPork = recipe.HasPork;
-        //    list.HasPoultry = recipe.HasPoultry;
-
-        //    if (recipe.Tags.ToList().Any())
-        //    {
-        //        list.Tags = recipe.Tags
-        //            .Select(x => new TagList()
-        //            {
-        //                Id = x.Id,
-        //                Name = x.Name,
-        //                Color = x.Color
-        //            });
-        //    }
-        //    else 
-        //    { 
-        //        list.Tags = new List<TagList>();
-        //    }
-
-        //    return list;
-        //}
+        //#endregion
     }
 }
