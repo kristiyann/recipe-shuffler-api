@@ -11,7 +11,7 @@ namespace recipe_shuffler.Services
 
         Task<Recipe> Insert(RecipeInsert recipe);
 
-        Task<Recipe> Update(RecipeInsert recipe);
+        Task<Recipe> Update(RecipeEdit recipe);
 
         Task<Recipe> Delete(Guid id);
 
