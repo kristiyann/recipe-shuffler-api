@@ -7,9 +7,9 @@ namespace recipe_shuffler.Services.Tags
     {
         IQueryable<Tag> GetList(Guid userId);
 
-        Task<Tag> Insert(TagInsert model);
+        Task<Tag> Insert(TagEdit model);
 
-        Task<Tag> Update(TagInsert model);
+        Task<Tag> Update(TagEdit model);
 
         Task<Tag> Delete(Guid id);
 

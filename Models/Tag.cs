@@ -15,7 +15,7 @@ namespace recipe_shuffler.Models
         // Hex Code Regex
 
         [RegularExpression("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", ErrorMessage = "Invalid Format")]
-        public string? Color { get; set; } = string.Empty;
+        public string? Color { get; set; }
 
         [JsonIgnore]
         public HashSet<Recipe>? Recipes { get; set; }

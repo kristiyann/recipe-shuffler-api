@@ -30,13 +30,13 @@ namespace recipe_shuffler.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Insert(TagInsert model)
+        public async Task<IActionResult> Insert(TagEdit model)
         {
             return Ok(await _service.Insert(model));
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(TagInsert model)
+        public async Task<IActionResult> Update(TagEdit model)
         {
             return Ok(await _service.Update(model));
         }

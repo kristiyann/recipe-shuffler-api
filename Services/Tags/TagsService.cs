@@ -32,18 +32,18 @@ namespace recipe_shuffler.Services.Tags
             return list;
         }
 
-        public async Task<Tag> Insert(TagInsert model)
+        public async Task<Tag> Insert(TagEdit model)
         {
-            Tag tag = ConvertToModel(model);
+            Tag tag = ConvertEditToDbObj(model);
             await _context.Tags.AddAsync(tag);
             await _context.SaveChangesAsync();
 
             return tag;
         }
 
-        public async Task<Tag> Update(TagInsert model)
+        public async Task<Tag> Update(TagEdit model)
         {
-            Tag tag = ConvertToModel(model);
+            Tag tag = ConvertEditToDbObj(model);
             _context.Tags.Update(tag);
             await _context.SaveChangesAsync();
 
@@ -61,7 +61,7 @@ namespace recipe_shuffler.Services.Tags
             return tag;
         }
 
-        private Tag ConvertToModel(TagInsert model)
+        private Tag ConvertEditToDbObj(TagEdit model)
         {
             Tag tag = new()
             {

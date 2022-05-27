@@ -12,20 +12,21 @@ namespace recipe_shuffler.Controllers
     {
         private readonly IUsersService _service;
 
-        public UsersController(IUsersService service) {
+        public UsersController(IUsersService service)
+        {
             _service = service;
         }
 
         // [HttpGet]
-                    // public IActionResult Get(Guid id)
-                    // {
-                    //     if (id != Guid.Empty && id != default )
-                    //     {
-                    //         IQueryable<UserList> user = _service.Get(id);
-                    //         return Ok(user);
-                    //     }
-                    //     else return BadRequest("Invalid parameters");
-                    // }
+        // public IActionResult Get(Guid id)
+        // {
+        //     if (id != Guid.Empty && id != default )
+        //     {
+        //         IQueryable<UserList> user = _service.Get(id);
+        //         return Ok(user);
+        //     }
+        //     else return BadRequest("Invalid parameters");
+        // }
 
         [HttpPost]
         public async Task<IActionResult> Insert(User model)
@@ -58,13 +59,13 @@ namespace recipe_shuffler.Controllers
         [Route("Auth")]
         public IActionResult UserAuth(string email, string password)
         {
-            Guid userId = _service.UserAuth(email, password); 
+            Guid userId = _service.UserAuth(email, password);
 
-             if (userId != Guid.Empty)
-             {
-                 return Ok(userId);
-             }
-             else return Unauthorized();
+            if (userId != Guid.Empty)
+            {
+                return Ok(userId);
+            }
+            else return Unauthorized();
         }
     }
 }

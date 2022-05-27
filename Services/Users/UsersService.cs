@@ -52,7 +52,7 @@ namespace recipe_shuffler.Services
         {
             model.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
-            User user = ConvertToModel(model);
+            User user = ConvertEditToDbObj(model);
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
 
@@ -75,9 +75,9 @@ namespace recipe_shuffler.Services
 
         public Guid UserAuth(string email, string password)
         {
-             User? user = _context.Users
-                 .Where(x => x.Email == email)
-                 .FirstOrDefault(x => x.Active);
+            User? user = _context.Users
+                .Where(x => x.Email == email)
+                .FirstOrDefault(x => x.Active);
 
             if (user != null)
             {
@@ -90,7 +90,7 @@ namespace recipe_shuffler.Services
             else return Guid.Empty;
         }
 
-        private User ConvertToModel(UserEdit model)
+        private static User ConvertEditToDbObj(UserEdit model)
         {
             User user = new()
             {

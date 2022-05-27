@@ -12,7 +12,7 @@ namespace recipe_shuffler.Models
 
         public string Title { get; set; } = string.Empty;
 
-        public string? Image { get; set; } = string.Empty;
+        public string? Image { get; set; } = "https://cdn-icons-png.flaticon.com/512/575/575577.png";
 
         public string? Ingredients { get; set; } = string.Empty;
 

@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 using recipe_shuffler.DTO;
+using recipe_shuffler.DTO.Recipes;
+using recipe_shuffler.DTO.Tags;
 using recipe_shuffler.Models;
 using recipe_shuffler.Services;
-using Microsoft.AspNetCore.OData.Routing.Controllers;
-using Microsoft.AspNetCore.OData.Query;
-using recipe_shuffler.DTO.Tags;
-using recipe_shuffler.DTO.Recipes;
 
 namespace recipe_shuffler.Controllers
 {
@@ -23,12 +23,12 @@ namespace recipe_shuffler.Controllers
 
         [HttpGet]
         [EnableQuery()]
-        public IActionResult GetRecipeList(ODataQueryOptions<Recipe> queryOptions, Guid userId) 
+        public IActionResult GetRecipeList(ODataQueryOptions<Recipe> queryOptions, Guid userId)
         {
             if (userId != Guid.Empty && userId != default)
             {
                 IQueryable list = _service.GetList(userId);
-                
+
                 return Ok(list);
             }
             else return BadRequest("Invalid parameters");
@@ -47,8 +47,8 @@ namespace recipe_shuffler.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Insert(RecipeInsert model) 
-        { 
+        public async Task<IActionResult> Insert(RecipeInsert model)
+        {
             return Ok(await _service.Insert(model));
         }
 
