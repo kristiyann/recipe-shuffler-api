@@ -2,7 +2,7 @@
 
 namespace recipe_shuffler.DTO.Tags
 {
-    public class TagInsert
+    public class TagEdit
     {
         public Guid Id { get; set; }
 

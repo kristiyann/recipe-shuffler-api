@@ -5,7 +5,6 @@ using recipe_shuffler.DTO.Recipes;
 using recipe_shuffler.DTO.Tags;
 using recipe_shuffler.Models;
 using recipe_shuffler.Services.Tags;
-using System.Reflection;
 
 namespace recipe_shuffler.Services
 {
@@ -13,7 +12,7 @@ namespace recipe_shuffler.Services
     {
         private readonly DataContext _context;
         private readonly ITagsService _tagsService;
-        
+
         public RecipesService(DataContext context, ITagsService tagsService)
         {
             _context = context;
@@ -81,7 +80,8 @@ namespace recipe_shuffler.Services
 
                 recipe = CustomUpdate(recipe, model, tags);
             }
-            else {
+            else
+            {
                 recipe = await ConvertEditModelToDbObj(model);
             }
 
@@ -188,7 +188,7 @@ namespace recipe_shuffler.Services
             return recipe;
         }
 
-        //#region Converters
+        //region Converters
         private Recipe ConvertInsertModelToDbObj(RecipeInsert model)
         {
             Recipe recipe = new()
@@ -224,7 +224,5 @@ namespace recipe_shuffler.Services
 
             return recipe;
         }
-
-        //#endregion
     }
 }
