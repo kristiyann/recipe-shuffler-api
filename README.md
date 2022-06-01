@@ -1,4 +1,4 @@
-<h1><p align="center">Recipe Suffler API</p></h1>
+<h1><p align="center">Recipe Shuffler API</p></h1>
 
 <h3>API Installation:</h3>
 1. This code uses SQL Server : https://www.microsoft.com/en-us/sql-server/sql-server-downloads. Download and set it up along with SQL Server Management Studio or an equivalent.<br>
