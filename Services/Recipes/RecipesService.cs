@@ -188,7 +188,7 @@ namespace recipe_shuffler.Services
             return recipe;
         }
 
-        //region Converters
+        #region Converters
         private Recipe ConvertInsertModelToDbObj(RecipeInsert model)
         {
             Recipe recipe = new()
@@ -224,5 +224,7 @@ namespace recipe_shuffler.Services
 
             return recipe;
         }
+
+        #endregion
     }
 }

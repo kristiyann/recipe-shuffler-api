@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using recipe_shuffler.DTO;
 using recipe_shuffler.DTO.Users;
 using recipe_shuffler.Models;
 using recipe_shuffler.Services;
@@ -55,11 +56,11 @@ namespace recipe_shuffler.Controllers
         //     else return NotFound();
         // }
 
-        [HttpGet]
+        [HttpPost]
         [Route("Auth")]
-        public IActionResult UserAuth(string email, string password)
+        public IActionResult UserAuth(UserAuth userAuth)
         {
-            Guid userId = _service.UserAuth(email, password);
+            Guid userId = _service.UserAuth(userAuth.Email, userAuth.Password);
 
             if (userId != Guid.Empty)
             {
