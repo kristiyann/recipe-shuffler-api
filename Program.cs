@@ -57,7 +57,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateAudience = false
     });
 
-builder.Services.AddControllers().AddOData(opt => opt.AddRouteComponents("api/", GetEdmModel()).Filter().Select().Expand().OrderBy().Count().SetMaxTop(null));
+builder.Services.AddControllers().AddOData(opt => opt.AddRouteComponents("api/", GetEdmModel()).Filter().OrderBy().Count().SetMaxTop(null));
 
 // Service Layer
 builder.Services.AddScoped<IRecipesService, RecipesService>();
