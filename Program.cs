@@ -11,14 +11,19 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using recipe_shuffler.DTO.Recipes;
 
 
 // OData
 static IEdmModel GetEdmModel()
 {
     ODataConventionModelBuilder builder = new();
-    builder.EntitySet<Recipe>("Recipes");
-    return builder.GetEdmModel();
+    builder.EntitySet<RecipeList>(nameof(RecipeList));
+
+    builder.EnableLowerCamelCase();
+    var model = builder.GetEdmModel();
+    builder.ValidateModel(model);
+    return model;
 }
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,7 +62,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateAudience = false
     });
 
-builder.Services.AddControllers().AddOData(opt => opt.AddRouteComponents("api/", GetEdmModel()).Filter().OrderBy().Count().SetMaxTop(null));
+builder.Services.AddControllers().AddOData(opt => opt.AddRouteComponents("api", GetEdmModel())
+.Filter()
+.OrderBy()
+.Count()
+.Select()
+.SetMaxTop(null));
 
 // Service Layer
 builder.Services.AddScoped<IRecipesService, RecipesService>();
