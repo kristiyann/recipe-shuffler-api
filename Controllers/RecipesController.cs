@@ -11,8 +11,7 @@ namespace recipe_shuffler.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    // [ApiExplorerSettings(IgnoreApi = true)]
-    public class RecipesController : ODataController
+    public class RecipesController : Controller
     {
         private readonly IRecipesService _service;
 
@@ -21,19 +20,19 @@ namespace recipe_shuffler.Controllers
             _service = service;
         }
 
-        [HttpGet]
-        [EnableQuery()]
-        [Authorize]
-        public IActionResult GetRecipeList(ODataQueryOptions<Recipe> queryOptions)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
+        //[HttpGet]
+        //[EnableQuery()]
+        //[Authorize]
+        //public IActionResult GetRecipeList(ODataQueryOptions<Recipe> queryOptions)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            IQueryable list = _service.GetList();
-            return Ok(list);
-        }
+        //    IQueryable<RecipeList> list = _service.GetList();
+        //    return Ok(list);
+        //}
 
         [HttpGet]
         [Route("GetRandom")]

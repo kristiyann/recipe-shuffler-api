@@ -18,7 +18,6 @@ namespace recipe_shuffler.Controllers
         }
 
         [HttpGet]
-        // [EnableQuery]
         [Authorize]
         public IActionResult GetTagList()
         {
@@ -41,7 +40,7 @@ namespace recipe_shuffler.Controllers
                 return BadRequest();
             }
 
-            return Created(await _service.Insert(model));
+            return Ok(await _service.Insert(model));
         }
 
         [HttpPut]

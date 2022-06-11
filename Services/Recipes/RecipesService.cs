@@ -11,13 +11,11 @@ namespace recipe_shuffler.Services
     public class RecipesService : IRecipesService
     {
         private readonly DataContext _context;
-        private readonly ITagsService _tagsService;
         private readonly IUsersService _usersService;
 
-        public RecipesService(DataContext context, ITagsService tagsService, IUsersService usersService)
+        public RecipesService(DataContext context, IUsersService usersService)
         {
             _context = context;
-            _tagsService = tagsService;
             _usersService = usersService;
         }
         public IQueryable<RecipeList> GetList()
