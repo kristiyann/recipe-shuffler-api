@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using recipe_shuffler.DTO;
@@ -23,6 +24,7 @@ namespace recipe_shuffler.Controllers
 
         [HttpGet]
         [EnableQuery()]
+        [Authorize]
         public IActionResult GetRecipeList(ODataQueryOptions<Recipe> queryOptions, Guid userId)
         {
             if (userId != Guid.Empty && userId != default)
@@ -36,6 +38,7 @@ namespace recipe_shuffler.Controllers
 
         [HttpGet]
         [Route("GetRandom")]
+        [Authorize]
         public IActionResult GetRandom(Guid userId)
         {
             if (userId != Guid.Empty && userId != default)
@@ -47,32 +50,35 @@ namespace recipe_shuffler.Controllers
 
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Insert(RecipeInsert model)
         {
             return Ok(await _service.Insert(model));
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> Update(RecipeEdit model)
         {
             return Ok(await _service.Update(model));
         }
 
-        [HttpPut]
-        [Route("InsertTag")]
-        public async Task<IActionResult> InsertTag(TagInsertIntoRecipe model)
-        {
-            return Ok(await _service.InsertTag(model));
-        }
+        //[HttpPut]
+        //[Route("InsertTag")]
+        //public async Task<IActionResult> InsertTag(TagInsertIntoRecipe model)
+        //{
+        //    return Ok(await _service.InsertTag(model));
+        //}
 
-        [HttpPut]
-        [Route("RemoveTag")]
-        public async Task<IActionResult> RemoveTag(TagInsertIntoRecipe model)
-        {
-            return Ok(await _service.RemoveTag(model));
-        }
+        //[HttpPut]
+        //[Route("RemoveTag")]
+        //public async Task<IActionResult> RemoveTag(TagInsertIntoRecipe model)
+        //{
+        //    return Ok(await _service.RemoveTag(model));
+        //}
 
         [HttpDelete]
+        [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
             if (id != Guid.Empty && id != default)

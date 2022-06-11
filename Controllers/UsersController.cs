@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using recipe_shuffler.DTO;
 using recipe_shuffler.DTO.Users;
 using recipe_shuffler.Models;
@@ -30,6 +31,7 @@ namespace recipe_shuffler.Controllers
         // }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Insert(User model)
         {
             Guid userId = await _service.Insert(model);
@@ -37,6 +39,7 @@ namespace recipe_shuffler.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> Update(UserEdit model)
         {
             Guid userId = await _service.Update(model);
@@ -58,6 +61,7 @@ namespace recipe_shuffler.Controllers
 
         [HttpPost]
         [Route("Auth")]
+        [AllowAnonymous]
         public IActionResult UserAuth(UserAuth userAuth)
         {
             string token = _service.UserAuth(userAuth.Email, userAuth.Password);

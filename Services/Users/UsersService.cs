@@ -123,7 +123,7 @@ namespace recipe_shuffler.Services
 
             SymmetricSecurityKey key = new(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
             SigningCredentials credentials = new(key, SecurityAlgorithms.HmacSha256Signature);
-            JwtSecurityToken token = new(claims: claims, expires: DateTime.Now.AddDays(2), signingCredentials: credentials);
+            JwtSecurityToken token = new(claims: claims, expires: DateTime.Now.AddDays(25), signingCredentials: credentials);
 
             string jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
