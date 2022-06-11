@@ -17,19 +17,19 @@ namespace recipe_shuffler.Controllers
             _service = service;
         }
 
-        [HttpGet]
-        [Authorize]
-        public IActionResult GetTagList()
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
+        //[HttpGet]
+        //[Authorize]
+        //public IActionResult GetTagList()
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            IQueryable list = _service.GetList();
+        //    IQueryable list = _service.GetList();
 
-            return Ok(list);
-        }
+        //    return Ok(list);
+        //}
 
         [HttpPost]
         [Authorize]

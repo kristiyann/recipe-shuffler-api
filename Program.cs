@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OData.Edm;
 using recipe_shuffler.Data;
-using recipe_shuffler.Models;
 using recipe_shuffler.Services;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
@@ -12,6 +11,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using recipe_shuffler.DTO.Recipes;
+using recipe_shuffler.DTO.Tags;
 
 
 // OData
@@ -19,6 +19,7 @@ static IEdmModel GetEdmModel()
 {
     ODataConventionModelBuilder builder = new();
     builder.EntitySet<RecipeList>(nameof(RecipeList));
+    builder.EntitySet<TagList>(nameof(TagList));
 
     builder.EnableLowerCamelCase();
     var model = builder.GetEdmModel();
@@ -53,11 +54,12 @@ builder.Services.AddSwaggerGen(
     }
 );
 // Jwt
+string secretToken = builder.Configuration["AppSettings:Token"];
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
     options => options.TokenValidationParameters = new()
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretToken)),
         ValidateIssuer = false,
         ValidateAudience = false
     });
@@ -66,6 +68,7 @@ builder.Services.AddControllers().AddOData(opt => opt.AddRouteComponents("api", 
 .Filter()
 .OrderBy()
 .Count()
+.Expand()
 .Select()
 .SetMaxTop(null));
 

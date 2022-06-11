@@ -5,7 +5,7 @@ namespace recipe_shuffler.Services.Tags
 {
     public interface ITagsService
     {
-        IQueryable<Tag> GetList();
+        IQueryable<TagList> GetList();
 
         Task<Tag> Insert(TagEdit model);
 
