@@ -12,16 +12,18 @@ namespace recipe_shuffler.Services
     {
         private readonly DataContext _context;
         private readonly ITagsService _tagsService;
+        private readonly IUsersService _usersService;
 
-        public RecipesService(DataContext context, ITagsService tagsService)
+        public RecipesService(DataContext context, ITagsService tagsService, IUsersService usersService)
         {
             _context = context;
             _tagsService = tagsService;
+            _usersService = usersService;
         }
-        public IQueryable<RecipeList> GetList(Guid userId)
+        public IQueryable<RecipeList> GetList()
         {
             IQueryable<RecipeList> list = _context.Recipes
-                .Where(x => x.UserId == userId)
+                .Where(x => x.UserId == _usersService.GetMyId())
                 .Select(x => new RecipeList()
                 {
                     Id = x.Id,
@@ -93,10 +95,16 @@ namespace recipe_shuffler.Services
 
         public async Task<Recipe> Delete(Guid id)
         {
-            Recipe? recipe = _context.Recipes.FirstOrDefault(x => x.Id == id);
+            Recipe recipe = _context.Recipes
+                .Where(x => x.UserId == _usersService.GetMyId())
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
 
-            _context.Remove(recipe);
-            await _context.SaveChangesAsync();
+            if (recipe != null)
+            {
+                _context.Remove(recipe);
+                await _context.SaveChangesAsync();
+            }
 
             return recipe;
         }
@@ -104,7 +112,7 @@ namespace recipe_shuffler.Services
         public Recipe GetRandom(Guid userId)
         {
             List<Recipe> list = _context.Recipes
-                .Where(x => x.UserId == userId).ToList();
+                .Where(x => x.UserId == _usersService.GetMyId()).ToList();
 
             int totalRecipes = list.Count;
 
@@ -197,7 +205,7 @@ namespace recipe_shuffler.Services
                 Image = model.Image,
                 Instructions = model.Instructions,
                 Ingredients = model.Ingredients,
-                User = _context.Users.Find(model.UserId),
+                User = _context.Users.Find(_usersService.GetMyId()),
                 Tags = new HashSet<Tag>()
             };
 

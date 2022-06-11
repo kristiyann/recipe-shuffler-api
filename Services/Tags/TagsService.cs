@@ -7,16 +7,18 @@ namespace recipe_shuffler.Services.Tags
     public class TagsService : ITagsService
     {
         private readonly DataContext _context;
+        private readonly IUsersService _usersService;
 
-        public TagsService(DataContext context)
+        public TagsService(DataContext context, IUsersService usersService)
         {
             _context = context;
+            _usersService = usersService;
         }
 
         public IQueryable<Tag> GetList(Guid userId)
         {
             IQueryable<Tag> query = _context.Tags
-                .Where(x => x.UserId == userId);
+                .Where(x => x.UserId == _usersService.GetMyId());
             
             IQueryable<Tag> list = query
                 .Select(x => new Tag()
@@ -52,7 +54,9 @@ namespace recipe_shuffler.Services.Tags
 
         public async Task<Tag> Delete(Guid id)
         {
-            Tag? tag = _context.Tags.FirstOrDefault(x => x.Id == id);
+            Tag? tag = _context.Tags.
+                Where(x => x.UserId == _usersService.GetMyId())
+                .FirstOrDefault(x => x.Id == id);
 
             _context.Remove(tag);
 

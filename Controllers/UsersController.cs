@@ -19,16 +19,13 @@ namespace recipe_shuffler.Controllers
             _service = service;
         }
 
-        // [HttpGet]
-        // public IActionResult Get(Guid id)
-        // {
-        //     if (id != Guid.Empty && id != default )
-        //     {
-        //         IQueryable<UserList> user = _service.Get(id);
-        //         return Ok(user);
-        //     }
-        //     else return BadRequest("Invalid parameters");
-        // }
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult GetMyId()
+        {
+            Guid userId = _service.GetMyId();
+            return Ok(userId);
+        }
 
         [HttpPost]
         [AllowAnonymous]
@@ -37,27 +34,6 @@ namespace recipe_shuffler.Controllers
             Guid userId = await _service.Insert(model);
             return Ok(userId);
         }
-
-        [HttpPut]
-        [Authorize]
-        public async Task<IActionResult> Update(UserEdit model)
-        {
-            Guid userId = await _service.Update(model);
-            return Ok(userId);
-        }
-
-        // [HttpPut]
-        // [Route("UpdatePassword")]
-        // public async Task<IActionResult> UpdatePassword(UserPasswordEdit model)
-        // {
-        //     Guid userId = await _service.UpdatePassword(model);
-        //
-        //     if (userId != Guid.Empty)
-        //     {
-        //         return Ok(userId);
-        //     }
-        //     else return NotFound();
-        // }
 
         [HttpPost]
         [Route("Auth")]

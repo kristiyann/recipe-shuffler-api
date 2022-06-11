@@ -63,6 +63,7 @@ builder.Services.AddControllers().AddOData(opt => opt.AddRouteComponents("api/",
 builder.Services.AddScoped<IRecipesService, RecipesService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<ITagsService, TagsService>();
+builder.Services.AddHttpContextAccessor(); // HttpContext
 
 // CORS
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";

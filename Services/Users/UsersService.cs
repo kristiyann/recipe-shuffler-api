@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using recipe_shuffler.Data;
 using recipe_shuffler.DTO.Users;
 using recipe_shuffler.Models;
@@ -12,35 +11,25 @@ namespace recipe_shuffler.Services
     {
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UsersService(DataContext context, IConfiguration configuration)
+        public UsersService(DataContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public IQueryable<UserList> Get(Guid id)
+        public Guid GetMyId() 
         {
-            IQueryable<UserList> user = _context.Users
-                .Where(x => x.Id == id)
-                .Where(x => x.Active)
-                .Include(x => x.Recipes)
-                .Select(x => new UserList()
-                {
-                    Id = x.Id,
-                    Username = x.Username,
-                    Email = x.Email,
-                    Recipes = x.Recipes.Select(z => new Recipe()
-                    {
-                        Id = z.Id,
-                        Title = z.Title,
-                        Image = z.Image,
-                        Ingredients = z.Ingredients,
-                        Instructions = z.Instructions,
-                    }),
-                });
+            Guid result = Guid.Empty;
+            if (_httpContextAccessor.HttpContext != null)
+            {
+                var value = _httpContextAccessor.HttpContext.User.FindFirst("userId").Value;
+                result = Guid.Parse(value);
+            }
 
-            return user;
+            return result;
         }
 
         public async Task<Guid> Insert(User user)
@@ -48,31 +37,6 @@ namespace recipe_shuffler.Services
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
             _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return user.Id;
-        }
-
-        public async Task<Guid> Update(UserEdit model)
-        {
-            model.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
-
-            User user = ConvertEditToDbObj(model);
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
-
-            return user.Id;
-        }
-
-        public async Task<Guid> UpdatePassword(UserPasswordEdit model)
-        {
-            User user = _context.Users
-                .FirstOrDefault(x => x.Id == model.Id);
-
-            model.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
-            user.Password = model.Password;
-
-            _context.Update(user);
             await _context.SaveChangesAsync();
 
             return user.Id;
@@ -118,7 +82,8 @@ namespace recipe_shuffler.Services
         {
             List<Claim> claims = new()
             {
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim("userId", user.Id.ToString())
             };
 
             SymmetricSecurityKey key = new(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));

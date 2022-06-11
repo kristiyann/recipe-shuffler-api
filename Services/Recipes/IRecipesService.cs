@@ -7,7 +7,7 @@ namespace recipe_shuffler.Services
 {
     public interface IRecipesService
     {
-        IQueryable<RecipeList> GetList(Guid userId);
+        IQueryable<RecipeList> GetList();
 
         Task<Recipe> Insert(RecipeInsert recipe);
 

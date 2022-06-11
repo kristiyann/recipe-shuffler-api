@@ -25,15 +25,15 @@ namespace recipe_shuffler.Controllers
         [HttpGet]
         [EnableQuery()]
         [Authorize]
-        public IActionResult GetRecipeList(ODataQueryOptions<Recipe> queryOptions, Guid userId)
+        public IActionResult GetRecipeList(ODataQueryOptions<Recipe> queryOptions)
         {
-            if (userId != Guid.Empty && userId != default)
+            if (!this.ModelState.IsValid)
             {
-                IQueryable list = _service.GetList(userId);
-
-                return Ok(list);
+                return BadRequest();
             }
-            else return BadRequest("Invalid parameters");
+
+            IQueryable list = _service.GetList();
+            return Ok(list);
         }
 
         [HttpGet]
