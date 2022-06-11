@@ -15,18 +15,17 @@ namespace recipe_shuffler.Services.Tags
             _usersService = usersService;
         }
 
-        public IQueryable<Tag> GetList()
+        public IQueryable<TagList> GetList()
         {
             IQueryable<Tag> query = _context.Tags
                 .Where(x => x.UserId == _usersService.GetMyId());
 
-            IQueryable<Tag> list = query
-                .Select(x => new Tag()
+            IQueryable<TagList> list = query
+                .Select(x => new TagList()
                 {
                     Id = x.Id,
                     Name = x.Name,
                     Color = x.Color,
-                    UserId = x.UserId,
                 });
 
             return list;

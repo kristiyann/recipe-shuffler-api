@@ -19,18 +19,18 @@ namespace recipe_shuffler.Controllers
             _service = service;
         }
 
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult GetMyId()
-        {
-            if (!this.ModelState.IsValid)
-            {
-                return BadRequest();
-            }
+        //[HttpGet]
+        //[AllowAnonymous]
+        //public IActionResult GetMyId()
+        //{
+        //    if (!this.ModelState.IsValid)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            Guid userId = _service.GetMyId();
-            return Ok(userId);
-        }
+        //    Guid userId = _service.GetMyId();
+        //    return Ok(userId);
+        //}
 
         [HttpPost]
         [AllowAnonymous]
