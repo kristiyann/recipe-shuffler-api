@@ -5,13 +5,13 @@ namespace recipe_shuffler.Services.Tags
 {
     public interface ITagsService
     {
-        IQueryable<Tag> GetList(Guid userId);
+        IQueryable<Tag> GetList();
 
         Task<Tag> Insert(TagEdit model);
 
         Task<Tag> Update(TagEdit model);
 
-        Task<Tag> Delete(Guid id);
+        Task<bool> Delete(Guid id);
 
         Task<Tag> GetById(Guid id);
     }

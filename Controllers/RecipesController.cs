@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using recipe_shuffler.DTO;
 using recipe_shuffler.DTO.Recipes;
-using recipe_shuffler.DTO.Tags;
 using recipe_shuffler.Models;
 using recipe_shuffler.Services;
 
@@ -27,7 +26,7 @@ namespace recipe_shuffler.Controllers
         [Authorize]
         public IActionResult GetRecipeList(ODataQueryOptions<Recipe> queryOptions)
         {
-            if (!this.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
@@ -39,13 +38,15 @@ namespace recipe_shuffler.Controllers
         [HttpGet]
         [Route("GetRandom")]
         [Authorize]
-        public IActionResult GetRandom(Guid userId)
+        public IActionResult GetRandom()
         {
-            if (userId != Guid.Empty && userId != default)
+            if (!ModelState.IsValid)
             {
-                return Ok(_service.GetRandom(userId));
+                return BadRequest();
             }
-            else return BadRequest("Invalid parameters");
+
+            return Ok(_service.GetRandom());
+
         }
 
 
@@ -53,6 +54,11 @@ namespace recipe_shuffler.Controllers
         [Authorize]
         public async Task<IActionResult> Insert(RecipeInsert model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             return Ok(await _service.Insert(model));
         }
 
@@ -60,6 +66,11 @@ namespace recipe_shuffler.Controllers
         [Authorize]
         public async Task<IActionResult> Update(RecipeEdit model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             return Ok(await _service.Update(model));
         }
 
@@ -81,11 +92,25 @@ namespace recipe_shuffler.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             if (id != Guid.Empty && id != default)
             {
-                return Ok(await _service.Delete(id));
+                bool result = await _service.Delete(id);
+
+                if (result)
+                {
+                    return Ok(result);
+                }
+                else return BadRequest("Invalid parameters");
             }
-            else return BadRequest("Invalid parameters");
+            else
+            {
+                return BadRequest("Invalid parameters");
+            }
         }
     }
 }

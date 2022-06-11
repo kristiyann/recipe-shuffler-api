@@ -23,6 +23,11 @@ namespace recipe_shuffler.Controllers
         [AllowAnonymous]
         public IActionResult GetMyId()
         {
+            if (!this.ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             Guid userId = _service.GetMyId();
             return Ok(userId);
         }
@@ -31,7 +36,13 @@ namespace recipe_shuffler.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Insert(User model)
         {
+            if (!this.ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             Guid userId = await _service.Insert(model);
+
             return Ok(userId);
         }
 
@@ -40,6 +51,11 @@ namespace recipe_shuffler.Controllers
         [AllowAnonymous]
         public IActionResult UserAuth(UserAuth userAuth)
         {
+            if (!this.ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             string token = _service.UserAuth(userAuth.Email, userAuth.Password);
 
             if (!string.IsNullOrEmpty(token))

@@ -15,11 +15,11 @@ namespace recipe_shuffler.Services.Tags
             _usersService = usersService;
         }
 
-        public IQueryable<Tag> GetList(Guid userId)
+        public IQueryable<Tag> GetList()
         {
             IQueryable<Tag> query = _context.Tags
                 .Where(x => x.UserId == _usersService.GetMyId());
-            
+
             IQueryable<Tag> list = query
                 .Select(x => new Tag()
                 {
@@ -28,8 +28,6 @@ namespace recipe_shuffler.Services.Tags
                     Color = x.Color,
                     UserId = x.UserId,
                 });
-
-            // list = queryOptions.ApplyTo(list);
 
             return list;
         }
@@ -52,17 +50,23 @@ namespace recipe_shuffler.Services.Tags
             return tag;
         }
 
-        public async Task<Tag> Delete(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
-            Tag? tag = _context.Tags.
+            bool result = false;
+
+            Tag tag = _context.Tags.
                 Where(x => x.UserId == _usersService.GetMyId())
                 .FirstOrDefault(x => x.Id == id);
 
-            _context.Remove(tag);
+            if (tag != null)
+            {
+                _context.Remove(tag);
+                await _context.SaveChangesAsync();
 
-            await _context.SaveChangesAsync();
+                result = true;
+            }
 
-            return tag;
+            return result;
         }
 
         private Tag ConvertEditToDbObj(TagEdit model)
@@ -72,7 +76,7 @@ namespace recipe_shuffler.Services.Tags
                 Id = model.Id,
                 Name = model.Name,
                 Color = model.Color,
-                User = _context.Users.Find(model.UserId)
+                User = _context.Users.Find(_usersService.GetMyId())
             };
 
             return tag;

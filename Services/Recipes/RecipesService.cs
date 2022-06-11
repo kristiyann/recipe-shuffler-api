@@ -93,8 +93,10 @@ namespace recipe_shuffler.Services
             return recipe;
         }
 
-        public async Task<Recipe> Delete(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
+            bool result = false;
+
             Recipe recipe = _context.Recipes
                 .Where(x => x.UserId == _usersService.GetMyId())
                 .Where(x => x.Id == id)
@@ -104,12 +106,14 @@ namespace recipe_shuffler.Services
             {
                 _context.Remove(recipe);
                 await _context.SaveChangesAsync();
+
+                result = true;
             }
 
-            return recipe;
+            return result;
         }
 
-        public Recipe GetRandom(Guid userId)
+        public Recipe GetRandom()
         {
             List<Recipe> list = _context.Recipes
                 .Where(x => x.UserId == _usersService.GetMyId()).ToList();
@@ -120,40 +124,10 @@ namespace recipe_shuffler.Services
             int offset = random.Next(0, totalRecipes);
 
             Recipe? recipe = _context.Recipes
-                .Where(x => x.UserId == userId)
+                .Where(x => x.UserId == _usersService.GetMyId())
                 .Include(x => x.Tags)
                 .Skip(offset)
                 .FirstOrDefault();
-
-            return recipe;
-        }
-
-        public async Task<Recipe> InsertTag(TagInsertIntoRecipe model)
-        {
-            Recipe recipe = _context.Recipes
-                .Where(x => x.Id == model.RecipeId)
-                .Include(x => x.Tags)
-                .FirstOrDefault();
-
-            Tag tag = await _tagsService.GetById(model.TagId);
-
-            recipe.Tags.Add(tag);
-            await _context.SaveChangesAsync();
-
-            return recipe;
-        }
-
-        public async Task<Recipe> RemoveTag(TagInsertIntoRecipe model)
-        {
-            Recipe recipe = _context.Recipes
-                .Where(x => x.Id == model.RecipeId)
-                .Include(x => x.Tags)
-                .FirstOrDefault();
-
-            Tag tag = await _tagsService.GetById(model.TagId);
-
-            recipe.Tags.Remove(tag);
-            await _context.SaveChangesAsync();
 
             return recipe;
         }
@@ -222,7 +196,7 @@ namespace recipe_shuffler.Services
                 Instructions = model.Instructions,
                 Ingredients = model.Ingredients,
                 // UserId = model.UserId,
-                User = await _context.Users.FindAsync(model.UserId)
+                User = await _context.Users.FindAsync(_usersService.GetMyId())
             };
 
             //if (model.TagIds != null)
