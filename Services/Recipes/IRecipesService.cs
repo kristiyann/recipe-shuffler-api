@@ -7,18 +7,14 @@ namespace recipe_shuffler.Services
 {
     public interface IRecipesService
     {
-        IQueryable<RecipeList> GetList(Guid userId);
+        IQueryable<RecipeList> GetList();
 
         Task<Recipe> Insert(RecipeInsert recipe);
 
         Task<Recipe> Update(RecipeEdit recipe);
 
-        Task<Recipe> Delete(Guid id);
+        Task<bool> Delete(Guid id);
 
-        Recipe GetRandom(Guid userId);
-
-        Task<Recipe> InsertTag(TagInsertIntoRecipe model);
-
-        Task<Recipe> RemoveTag(TagInsertIntoRecipe model);
+        Recipe GetRandom();
     }
 }

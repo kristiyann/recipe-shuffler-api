@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using recipe_shuffler.DTO;
 using recipe_shuffler.DTO.Users;
 using recipe_shuffler.Models;
@@ -18,55 +19,50 @@ namespace recipe_shuffler.Controllers
             _service = service;
         }
 
-        // [HttpGet]
-        // public IActionResult Get(Guid id)
-        // {
-        //     if (id != Guid.Empty && id != default )
-        //     {
-        //         IQueryable<UserList> user = _service.Get(id);
-        //         return Ok(user);
-        //     }
-        //     else return BadRequest("Invalid parameters");
-        // }
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult GetMyId()
+        {
+            if (!this.ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            Guid userId = _service.GetMyId();
+            return Ok(userId);
+        }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Insert(User model)
         {
+            if (!this.ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             Guid userId = await _service.Insert(model);
+
             return Ok(userId);
         }
-
-        [HttpPut]
-        public async Task<IActionResult> Update(UserEdit model)
-        {
-            Guid userId = await _service.Update(model);
-            return Ok(userId);
-        }
-
-        // [HttpPut]
-        // [Route("UpdatePassword")]
-        // public async Task<IActionResult> UpdatePassword(UserPasswordEdit model)
-        // {
-        //     Guid userId = await _service.UpdatePassword(model);
-        //
-        //     if (userId != Guid.Empty)
-        //     {
-        //         return Ok(userId);
-        //     }
-        //     else return NotFound();
-        // }
 
         [HttpPost]
         [Route("Auth")]
+        [AllowAnonymous]
         public IActionResult UserAuth(UserAuth userAuth)
         {
-            Guid userId = _service.UserAuth(userAuth.Email, userAuth.Password);
-
-            if (userId != Guid.Empty)
+            if (!this.ModelState.IsValid)
             {
-                return Ok(userId);
+                return BadRequest();
             }
-            else return Unauthorized();
+
+            string token = _service.UserAuth(userAuth.Email, userAuth.Password);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                return Ok(token);
+            }
+            else return Unauthorized("Wrong email or password");
         }
     }
 }

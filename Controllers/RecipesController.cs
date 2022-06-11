@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using recipe_shuffler.DTO;
 using recipe_shuffler.DTO.Recipes;
-using recipe_shuffler.DTO.Tags;
 using recipe_shuffler.Models;
 using recipe_shuffler.Services;
 
@@ -23,63 +23,94 @@ namespace recipe_shuffler.Controllers
 
         [HttpGet]
         [EnableQuery()]
-        public IActionResult GetRecipeList(ODataQueryOptions<Recipe> queryOptions, Guid userId)
+        [Authorize]
+        public IActionResult GetRecipeList(ODataQueryOptions<Recipe> queryOptions)
         {
-            if (userId != Guid.Empty && userId != default)
+            if (!ModelState.IsValid)
             {
-                IQueryable list = _service.GetList(userId);
-
-                return Ok(list);
+                return BadRequest();
             }
-            else return BadRequest("Invalid parameters");
+
+            IQueryable list = _service.GetList();
+            return Ok(list);
         }
 
         [HttpGet]
         [Route("GetRandom")]
-        public IActionResult GetRandom(Guid userId)
+        [Authorize]
+        public IActionResult GetRandom()
         {
-            if (userId != Guid.Empty && userId != default)
+            if (!ModelState.IsValid)
             {
-                return Ok(_service.GetRandom(userId));
+                return BadRequest();
             }
-            else return BadRequest("Invalid parameters");
+
+            return Ok(_service.GetRandom());
+
         }
 
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Insert(RecipeInsert model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             return Ok(await _service.Insert(model));
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> Update(RecipeEdit model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             return Ok(await _service.Update(model));
         }
 
-        [HttpPut]
-        [Route("InsertTag")]
-        public async Task<IActionResult> InsertTag(TagInsertIntoRecipe model)
-        {
-            return Ok(await _service.InsertTag(model));
-        }
+        //[HttpPut]
+        //[Route("InsertTag")]
+        //public async Task<IActionResult> InsertTag(TagInsertIntoRecipe model)
+        //{
+        //    return Ok(await _service.InsertTag(model));
+        //}
 
-        [HttpPut]
-        [Route("RemoveTag")]
-        public async Task<IActionResult> RemoveTag(TagInsertIntoRecipe model)
-        {
-            return Ok(await _service.RemoveTag(model));
-        }
+        //[HttpPut]
+        //[Route("RemoveTag")]
+        //public async Task<IActionResult> RemoveTag(TagInsertIntoRecipe model)
+        //{
+        //    return Ok(await _service.RemoveTag(model));
+        //}
 
         [HttpDelete]
+        [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             if (id != Guid.Empty && id != default)
             {
-                return Ok(await _service.Delete(id));
+                bool result = await _service.Delete(id);
+
+                if (result)
+                {
+                    return Ok(result);
+                }
+                else return BadRequest("Invalid parameters");
             }
-            else return BadRequest("Invalid parameters");
+            else
+            {
+                return BadRequest("Invalid parameters");
+            }
         }
     }
 }

@@ -7,17 +7,19 @@ namespace recipe_shuffler.Services.Tags
     public class TagsService : ITagsService
     {
         private readonly DataContext _context;
+        private readonly IUsersService _usersService;
 
-        public TagsService(DataContext context)
+        public TagsService(DataContext context, IUsersService usersService)
         {
             _context = context;
+            _usersService = usersService;
         }
 
-        public IQueryable<Tag> GetList(Guid userId)
+        public IQueryable<Tag> GetList()
         {
             IQueryable<Tag> query = _context.Tags
-                .Where(x => x.UserId == userId);
-            
+                .Where(x => x.UserId == _usersService.GetMyId());
+
             IQueryable<Tag> list = query
                 .Select(x => new Tag()
                 {
@@ -26,8 +28,6 @@ namespace recipe_shuffler.Services.Tags
                     Color = x.Color,
                     UserId = x.UserId,
                 });
-
-            // list = queryOptions.ApplyTo(list);
 
             return list;
         }
@@ -50,15 +50,23 @@ namespace recipe_shuffler.Services.Tags
             return tag;
         }
 
-        public async Task<Tag> Delete(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
-            Tag? tag = _context.Tags.FirstOrDefault(x => x.Id == id);
+            bool result = false;
 
-            _context.Remove(tag);
+            Tag tag = _context.Tags.
+                Where(x => x.UserId == _usersService.GetMyId())
+                .FirstOrDefault(x => x.Id == id);
 
-            await _context.SaveChangesAsync();
+            if (tag != null)
+            {
+                _context.Remove(tag);
+                await _context.SaveChangesAsync();
 
-            return tag;
+                result = true;
+            }
+
+            return result;
         }
 
         private Tag ConvertEditToDbObj(TagEdit model)
@@ -68,7 +76,7 @@ namespace recipe_shuffler.Services.Tags
                 Id = model.Id,
                 Name = model.Name,
                 Color = model.Color,
-                User = _context.Users.Find(model.UserId)
+                User = _context.Users.Find(_usersService.GetMyId())
             };
 
             return tag;

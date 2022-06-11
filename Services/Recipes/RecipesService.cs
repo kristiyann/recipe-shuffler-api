@@ -12,16 +12,18 @@ namespace recipe_shuffler.Services
     {
         private readonly DataContext _context;
         private readonly ITagsService _tagsService;
+        private readonly IUsersService _usersService;
 
-        public RecipesService(DataContext context, ITagsService tagsService)
+        public RecipesService(DataContext context, ITagsService tagsService, IUsersService usersService)
         {
             _context = context;
             _tagsService = tagsService;
+            _usersService = usersService;
         }
-        public IQueryable<RecipeList> GetList(Guid userId)
+        public IQueryable<RecipeList> GetList()
         {
             IQueryable<RecipeList> list = _context.Recipes
-                .Where(x => x.UserId == userId)
+                .Where(x => x.UserId == _usersService.GetMyId())
                 .Select(x => new RecipeList()
                 {
                     Id = x.Id,
@@ -91,20 +93,30 @@ namespace recipe_shuffler.Services
             return recipe;
         }
 
-        public async Task<Recipe> Delete(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
-            Recipe? recipe = _context.Recipes.FirstOrDefault(x => x.Id == id);
+            bool result = false;
 
-            _context.Remove(recipe);
-            await _context.SaveChangesAsync();
+            Recipe recipe = _context.Recipes
+                .Where(x => x.UserId == _usersService.GetMyId())
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
 
-            return recipe;
+            if (recipe != null)
+            {
+                _context.Remove(recipe);
+                await _context.SaveChangesAsync();
+
+                result = true;
+            }
+
+            return result;
         }
 
-        public Recipe GetRandom(Guid userId)
+        public Recipe GetRandom()
         {
             List<Recipe> list = _context.Recipes
-                .Where(x => x.UserId == userId).ToList();
+                .Where(x => x.UserId == _usersService.GetMyId()).ToList();
 
             int totalRecipes = list.Count;
 
@@ -112,40 +124,10 @@ namespace recipe_shuffler.Services
             int offset = random.Next(0, totalRecipes);
 
             Recipe? recipe = _context.Recipes
-                .Where(x => x.UserId == userId)
+                .Where(x => x.UserId == _usersService.GetMyId())
                 .Include(x => x.Tags)
                 .Skip(offset)
                 .FirstOrDefault();
-
-            return recipe;
-        }
-
-        public async Task<Recipe> InsertTag(TagInsertIntoRecipe model)
-        {
-            Recipe recipe = _context.Recipes
-                .Where(x => x.Id == model.RecipeId)
-                .Include(x => x.Tags)
-                .FirstOrDefault();
-
-            Tag tag = await _tagsService.GetById(model.TagId);
-
-            recipe.Tags.Add(tag);
-            await _context.SaveChangesAsync();
-
-            return recipe;
-        }
-
-        public async Task<Recipe> RemoveTag(TagInsertIntoRecipe model)
-        {
-            Recipe recipe = _context.Recipes
-                .Where(x => x.Id == model.RecipeId)
-                .Include(x => x.Tags)
-                .FirstOrDefault();
-
-            Tag tag = await _tagsService.GetById(model.TagId);
-
-            recipe.Tags.Remove(tag);
-            await _context.SaveChangesAsync();
 
             return recipe;
         }
@@ -197,7 +179,7 @@ namespace recipe_shuffler.Services
                 Image = model.Image,
                 Instructions = model.Instructions,
                 Ingredients = model.Ingredients,
-                User = _context.Users.Find(model.UserId),
+                User = _context.Users.Find(_usersService.GetMyId()),
                 Tags = new HashSet<Tag>()
             };
 
@@ -214,7 +196,7 @@ namespace recipe_shuffler.Services
                 Instructions = model.Instructions,
                 Ingredients = model.Ingredients,
                 // UserId = model.UserId,
-                User = await _context.Users.FindAsync(model.UserId)
+                User = await _context.Users.FindAsync(_usersService.GetMyId())
             };
 
             //if (model.TagIds != null)

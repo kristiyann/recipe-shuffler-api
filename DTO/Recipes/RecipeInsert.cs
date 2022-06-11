@@ -10,8 +10,6 @@
 
         public string? Instructions { get; set; } = string.Empty;
 
-        public Guid UserId { get; set; }
-
         public IEnumerable<Guid>? TagIds { get; set; }
     }
 }
