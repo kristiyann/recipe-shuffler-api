@@ -53,11 +53,12 @@ builder.Services.AddSwaggerGen(
     }
 );
 // Jwt
+string secretToken = builder.Configuration["AppSettings:Token"];
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
     options => options.TokenValidationParameters = new()
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretToken)),
         ValidateIssuer = false,
         ValidateAudience = false
     });
