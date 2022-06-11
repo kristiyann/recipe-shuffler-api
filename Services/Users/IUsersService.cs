@@ -15,6 +15,6 @@ namespace recipe_shuffler.Services
 
         Task<Guid> UpdatePassword(UserPasswordEdit model);
 
-        Guid UserAuth(String email, String password);
+        string UserAuth(String email, String password);
     }
 }

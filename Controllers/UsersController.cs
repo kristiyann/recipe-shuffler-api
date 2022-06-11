@@ -60,13 +60,13 @@ namespace recipe_shuffler.Controllers
         [Route("Auth")]
         public IActionResult UserAuth(UserAuth userAuth)
         {
-            Guid userId = _service.UserAuth(userAuth.Email, userAuth.Password);
+            string token = _service.UserAuth(userAuth.Email, userAuth.Password);
 
-            if (userId != Guid.Empty)
+            if (!string.IsNullOrEmpty(token))
             {
-                return Ok(userId);
+                return Ok(token);
             }
-            else return Unauthorized();
+            else return Unauthorized("Wrong email or password");
         }
     }
 }

@@ -1,17 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using recipe_shuffler.Data;
 using recipe_shuffler.DTO.Users;
 using recipe_shuffler.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace recipe_shuffler.Services
 {
     public class UsersService : IUsersService
     {
         private readonly DataContext _context;
+        private readonly IConfiguration _configuration;
 
-        public UsersService(DataContext context)
+        public UsersService(DataContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public IQueryable<UserList> Get(Guid id)
@@ -73,7 +78,7 @@ namespace recipe_shuffler.Services
             return user.Id;
         }
 
-        public Guid UserAuth(string email, string password)
+        public string UserAuth(string email, string password)
         {
             User? user = _context.Users
                 .Where(x => x.Email == email)
@@ -83,11 +88,17 @@ namespace recipe_shuffler.Services
             {
                 if (BCrypt.Net.BCrypt.Verify(password, user.Password))
                 {
-                    return user.Id;
+                    return CreateJwtToken(user);
                 }
-                else return Guid.Empty;
+                else
+                {
+                    return string.Empty;
+                }
             }
-            else return Guid.Empty;
+            else
+            {
+                return string.Empty;
+            }
         }
 
         private static User ConvertEditToDbObj(UserEdit model)
@@ -101,6 +112,22 @@ namespace recipe_shuffler.Services
             };
 
             return user;
+        }
+
+        private string CreateJwtToken(User user)
+        {
+            List<Claim> claims = new()
+            {
+                new Claim(ClaimTypes.Email, user.Email)
+            };
+
+            SymmetricSecurityKey key = new(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+            SigningCredentials credentials = new(key, SecurityAlgorithms.HmacSha256Signature);
+            JwtSecurityToken token = new(claims: claims, expires: DateTime.Now.AddDays(2), signingCredentials: credentials);
+
+            string jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt;
         }
     }
 }
