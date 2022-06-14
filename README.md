@@ -6,4 +6,4 @@
 3. It is possible the connection string settings in the ASP.NET Project work for you but if not, you may find and edit it in the "appsettings.json" file.<br>
 
 <h3>API Use:</h3>
-https://documenter.getpostman.com/view/17475694/Uz5Nit1J
+https://documenter.getpostman.com/view/17475694/UzBgvAAk
