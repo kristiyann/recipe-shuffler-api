@@ -56,11 +56,11 @@ namespace recipe_shuffler.Controllers
         //     else return NotFound();
         // }
 
-        [HttpPost]
+        [HttpGet]
         [Route("Auth")]
-        public IActionResult UserAuth(UserAuth userAuth)
+        public IActionResult UserAuth(string email, string password)
         {
-            Guid userId = _service.UserAuth(userAuth.Email, userAuth.Password);
+            Guid userId = _service.UserAuth(email, password);
 
             if (userId != Guid.Empty)
             {
