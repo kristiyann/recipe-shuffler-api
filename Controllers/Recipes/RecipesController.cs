@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
+using recipe_shuffler.DataTransferObjects.Recipes;
 using recipe_shuffler.DTO;
 using recipe_shuffler.DTO.Recipes;
 using recipe_shuffler.Models;
@@ -37,17 +38,16 @@ namespace recipe_shuffler.Controllers
         [HttpGet]
         [Route("GetRandom")]
         [Authorize]
-        public IActionResult GetRandom()
+        public IActionResult GetRandom([FromBody] RecipeCustomFilter? customFilter = null)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            return Ok(_service.GetRandom());
+            return Ok(_service.GetRandom(customFilter));
 
         }
-
 
         [HttpPost]
         [Authorize]

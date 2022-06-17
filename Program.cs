@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OData.Edm;
 using recipe_shuffler.Data;
 using recipe_shuffler.Services;
 using Microsoft.AspNetCore.OData;
@@ -10,22 +9,21 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
-using recipe_shuffler.DTO.Recipes;
-using recipe_shuffler.DTO.Tags;
+using recipe_shuffler.Extensions;
 
 
 // OData
-static IEdmModel GetEdmModel()
-{
-    ODataConventionModelBuilder builder = new();
-    builder.EntitySet<RecipeList>(nameof(RecipeList));
-    builder.EntitySet<TagList>(nameof(TagList));
+//static IEdmModel GetEdmModel()
+//{
+//    ODataConventionModelBuilder builder = new();
+//    builder.EntitySet<RecipeList>(nameof(RecipeList));
+//    builder.EntitySet<TagList>(nameof(TagList));
 
-    builder.EnableLowerCamelCase();
-    var model = builder.GetEdmModel();
-    builder.ValidateModel(model);
-    return model;
-}
+//    builder.EnableLowerCamelCase();
+//    var model = builder.GetEdmModel();
+//    builder.ValidateModel(model);
+//    return model;
+//}
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,7 +62,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateAudience = false
     });
 
-builder.Services.AddControllers().AddOData(opt => opt.AddRouteComponents("api", GetEdmModel())
+builder.Services.AddControllers().AddOData(opt => opt.AddRouteComponents("api", new ODataConventionModelBuilder().UseEdmModel())
 .Filter()
 .OrderBy()
 .Count()

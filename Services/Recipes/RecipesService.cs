@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore; // Include
 using recipe_shuffler.Data;
+using recipe_shuffler.DataTransferObjects.Recipes;
 using recipe_shuffler.DTO;
 using recipe_shuffler.DTO.Recipes;
 using recipe_shuffler.DTO.Tags;
@@ -38,8 +39,8 @@ namespace recipe_shuffler.Services
                     }),
                     User = new GenericComboBoxUser()
                     {
-                        Id = x.UserId,
-                        Username = x.User.Username
+                        Value = x.UserId,
+                        Text = x.User.Username
                     }
                 });
 
@@ -113,22 +114,27 @@ namespace recipe_shuffler.Services
             return result;
         }
 
-        public Recipe GetRandom()
+        public List<Recipe> GetRandom(RecipeCustomFilter? customFilter)
         {
-            List<Recipe> list = this.GenerateInitialQuery().ToList();
+            IQueryable<Recipe> query = this.GenerateInitialQuery().Include(x => x.Tags);
 
-            int totalRecipes = list.Count;
+            query = ApplyCustomFilter(query, customFilter);
+
+            int totalRecipes = query.Count();
 
             Random random = new();
             int offset = random.Next(0, totalRecipes);
 
-            Recipe? recipe = _context.Recipes
-                .Where(x => x.UserId == _usersService.GetMyId())
-                .Include(x => x.Tags)
-                .Skip(offset)
-                .FirstOrDefault();
+            Recipe recipe = query.Skip(offset).FirstOrDefault();
 
-            return recipe;
+            List<Recipe> recipeCollection = new();
+
+            if (recipe != null)
+            {
+                recipeCollection.Add(recipe);
+            }
+
+            return recipeCollection;
         }
 
         private static Recipe CustomUpdate(Recipe recipe, RecipeEdit model, List<Tag> tags)
@@ -225,6 +231,33 @@ namespace recipe_shuffler.Services
             //}
 
             return recipe;
+        }
+
+        #endregion
+
+        #region customFilter
+
+        private static IQueryable<Recipe> ApplyCustomFilter(IQueryable<Recipe> query, RecipeCustomFilter? customFilter)
+        {
+            if (customFilter != null)
+            {
+                if (customFilter.Ingredients != null)
+                {
+                    query = query.Where(x => x.Ingredients.Contains(customFilter.Ingredients));
+                }
+
+                if (customFilter.UserId != null)
+                {
+                    query = query.Where(x => x.UserId == customFilter.UserId);
+                }
+
+                if (customFilter.TagIds != null)
+                {
+                    query = query.Where(x => customFilter.TagIds.Any(q => x.Tags.Any(z => z.Id == q)));
+                }
+            }
+
+            return query;
         }
 
         #endregion

@@ -6,6 +6,11 @@ namespace recipe_shuffler.Models
 {
     public class Recipe
     {
+        public Recipe()
+        {
+            Tags = new HashSet<Tag>();
+        }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public Guid Id { get; set; }
@@ -24,6 +29,6 @@ namespace recipe_shuffler.Models
 
         public User User { get; set; }
 
-        public HashSet<Tag> Tags { get; set; }
+        public ICollection<Tag> Tags { get; set; }
     }
 }

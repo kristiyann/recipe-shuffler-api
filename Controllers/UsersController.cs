@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using recipe_shuffler.DTO;
-using recipe_shuffler.DTO.Users;
 using recipe_shuffler.Models;
 using recipe_shuffler.Services;
 
@@ -38,12 +37,12 @@ namespace recipe_shuffler.Controllers
         {
             if (!this.ModelState.IsValid)
             {
-                return BadRequest();
+                return this.BadRequest();
             }
 
             Guid userId = await _service.Insert(model);
 
-            return Ok(userId);
+            return this.Ok(userId);
         }
 
         [HttpPost]
@@ -53,16 +52,16 @@ namespace recipe_shuffler.Controllers
         {
             if (!this.ModelState.IsValid)
             {
-                return BadRequest();
+                return this.BadRequest();
             }
 
             string token = _service.UserAuth(userAuth.Email, userAuth.Password);
 
             if (!string.IsNullOrEmpty(token))
             {
-                return Ok(token);
+                return this.Ok(token);
             }
-            else return Unauthorized("Wrong email or password");
+            else return this.Unauthorized("Wrong email or password");
         }
     }
 }

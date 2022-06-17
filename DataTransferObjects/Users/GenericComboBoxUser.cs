@@ -2,7 +2,7 @@
 {
     public class GenericComboBoxUser
     {
-        public Guid Id { get; set; }
-        public string Username { get; set; }
+        public Guid Value { get; set; }
+        public string Text { get; set; }
     }
 }
