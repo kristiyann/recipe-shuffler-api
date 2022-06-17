@@ -38,7 +38,7 @@ namespace recipe_shuffler.Controllers
         [HttpGet]
         [Route("GetRandom")]
         [Authorize]
-        public IActionResult GetRandom([FromBody] RecipeCustomFilter? customFilter = null)
+        public IActionResult GetRandom([FromQuery] RecipeCustomFilter? customFilter = null)
         {
             if (!ModelState.IsValid)
             {
