@@ -80,12 +80,5 @@ namespace recipe_shuffler.Services.Tags
 
             return tag;
         }
-
-        public async Task<Tag> GetById(Guid id)
-        {
-            Tag tag = await _context.Tags.FindAsync(id);
-
-            return tag;
-        }
     }
 }

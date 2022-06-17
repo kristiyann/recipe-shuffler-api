@@ -12,7 +12,5 @@ namespace recipe_shuffler.Services.Tags
         Task<Tag> Update(TagEdit model);
 
         Task<bool> Delete(Guid id);
-
-        Task<Tag> GetById(Guid id);
     }
 }
