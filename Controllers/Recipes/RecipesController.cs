@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Query;
-using Microsoft.AspNetCore.OData.Routing.Controllers;
 using recipe_shuffler.DataTransferObjects.Recipes;
 using recipe_shuffler.DTO;
 using recipe_shuffler.DTO.Recipes;
-using recipe_shuffler.Models;
 using recipe_shuffler.Services;
 
 namespace recipe_shuffler.Controllers
@@ -91,20 +88,14 @@ namespace recipe_shuffler.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
-            if (id != Guid.Empty && id != default)
-            {
-                bool result = await _service.Delete(id);
+            bool result = await _service.Delete(id);
 
-                if (result)
-                {
-                    return Ok(result);
-                }
-                else return BadRequest("Invalid parameters");
-            }
-            else
+            if (result)
             {
-                return BadRequest("Invalid parameters");
+                return Ok(result);
             }
+
+            return BadRequest("Invalid parameters");
         }
     }
 }
