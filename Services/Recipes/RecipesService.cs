@@ -19,9 +19,13 @@ namespace recipe_shuffler.Services
             _context = context;
             _usersService = usersService;
         }
-        public IQueryable<RecipeList> GetList()
+        public IQueryable<RecipeList> GetList(RecipeCustomFilter customFilter)
         {
-            IQueryable<RecipeList> list = this.GenerateInitialQuery()
+            IQueryable<Recipe> query = this.GenerateInitialQuery();
+
+            query = this.ApplyCustomFilter(query, customFilter);
+
+            IQueryable<RecipeList> list = query
                 .Select(x => new RecipeList()
                 {
                     Id = x.Id,
@@ -114,7 +118,7 @@ namespace recipe_shuffler.Services
             return result;
         }
 
-        public List<Recipe> GetRandom(RecipeCustomFilter? customFilter)
+        public List<Recipe> GetRandom(RecipeCustomFilter customFilter)
         {
             IQueryable<Recipe> query = this.GenerateInitialQuery().Include(x => x.Tags);
 
@@ -237,7 +241,7 @@ namespace recipe_shuffler.Services
 
         #region customFilter
 
-        private static IQueryable<Recipe> ApplyCustomFilter(IQueryable<Recipe> query, RecipeCustomFilter? customFilter)
+        private IQueryable<Recipe> ApplyCustomFilter(IQueryable<Recipe> query, RecipeCustomFilter customFilter)
         {
             if (customFilter != null)
             {
@@ -255,6 +259,11 @@ namespace recipe_shuffler.Services
                 {
                     query = query.Where(x => customFilter.TagIds.Any(q => x.Tags.Any(z => z.Id == q)));
                 }
+            }
+
+            if (customFilter == null || customFilter.UserId != this._usersService.GetMyId())
+            {
+                query = query.Where(x => x.IsPublic);
             }
 
             return query;

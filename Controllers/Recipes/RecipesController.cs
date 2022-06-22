@@ -38,7 +38,7 @@ namespace recipe_shuffler.Controllers
         [HttpGet]
         [Route("GetRandom")]
         [Authorize]
-        public IActionResult GetRandom([FromQuery] RecipeCustomFilter? customFilter = null)
+        public IActionResult GetRandom([FromQuery] RecipeCustomFilter customFilter = null)
         {
             if (!ModelState.IsValid)
             {
@@ -91,11 +91,6 @@ namespace recipe_shuffler.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             if (id != Guid.Empty && id != default)
             {
                 bool result = await _service.Delete(id);

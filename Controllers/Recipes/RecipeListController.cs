@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using recipe_shuffler.DTO.Recipes;
 using recipe_shuffler.Services;
+using recipe_shuffler.DataTransferObjects.Recipes;
 
 namespace recipe_shuffler.Controllers
 {
@@ -21,14 +22,14 @@ namespace recipe_shuffler.Controllers
 
         [EnableQuery(EnsureStableOrdering = false)]
         [Authorize]
-        public IActionResult GetRecipeList(ODataQueryOptions<RecipeList> queryOptions)
+        public IActionResult GetRecipeList(ODataQueryOptions<RecipeList> queryOptions, [FromQuery] RecipeCustomFilter customFilter = null)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            IQueryable<RecipeList> list = _service.GetList();
+            IQueryable<RecipeList> list = _service.GetList(customFilter);
             return Ok(list);
         }
     }
