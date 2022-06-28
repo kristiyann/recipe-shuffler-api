@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace recipe_shuffler.DTO.Tags
+namespace recipe_shuffler.DataTransferObjects
 {
     public class TagEdit
     {

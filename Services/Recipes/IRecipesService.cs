@@ -1,7 +1,4 @@
-﻿using recipe_shuffler.DataTransferObjects.Recipes;
-using recipe_shuffler.DTO;
-using recipe_shuffler.DTO.Recipes;
-using recipe_shuffler.DTO.Tags;
+﻿using recipe_shuffler.DataTransferObjects;
 using recipe_shuffler.Models;
 
 namespace recipe_shuffler.Services

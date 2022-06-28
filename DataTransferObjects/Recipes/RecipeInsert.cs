@@ -1,4 +1,4 @@
-﻿namespace recipe_shuffler.DTO
+﻿namespace recipe_shuffler.DataTransferObjects
 {
     public class RecipeInsert
     {

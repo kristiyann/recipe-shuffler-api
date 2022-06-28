@@ -1,4 +1,4 @@
-﻿namespace recipe_shuffler.DTO.Recipes
+﻿namespace recipe_shuffler.DataTransferObjects
 {
     public class RecipeEdit
     {

@@ -1,9 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore; // Include
 using recipe_shuffler.Data;
-using recipe_shuffler.DataTransferObjects.Recipes;
-using recipe_shuffler.DTO;
-using recipe_shuffler.DTO.Recipes;
-using recipe_shuffler.DTO.Tags;
 using recipe_shuffler.DataTransferObjects;
 using recipe_shuffler.Models;
 using recipe_shuffler.Models.CrossReference;

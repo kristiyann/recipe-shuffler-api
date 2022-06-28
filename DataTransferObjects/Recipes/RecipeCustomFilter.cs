@@ -1,4 +1,4 @@
-﻿namespace recipe_shuffler.DataTransferObjects.Recipes
+﻿namespace recipe_shuffler.DataTransferObjects
 {
     public class RecipeCustomFilter
     {

@@ -1,4 +1,4 @@
-﻿namespace recipe_shuffler.DTO.Tags
+﻿namespace recipe_shuffler.DataTransferObjects
 {
     public class TagList
     {

@@ -1,8 +1,4 @@
-﻿using recipe_shuffler.DataTransferObjects;
-using recipe_shuffler.DTO.Tags;
-using recipe_shuffler.DTO.Users;
-
-namespace recipe_shuffler.DTO.Recipes
+﻿namespace recipe_shuffler.DataTransferObjects
 {
     public class RecipeList
     {
