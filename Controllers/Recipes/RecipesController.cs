@@ -18,20 +18,6 @@ namespace recipe_shuffler.Controllers
             _service = service;
         }
 
-        //[HttpGet]
-        //[EnableQuery()]
-        //[Authorize]
-        //public IActionResult GetRecipeList(ODataQueryOptions<Recipe> queryOptions)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    IQueryable<RecipeList> list = _service.GetList();
-        //    return Ok(list);
-        //}
-
         [HttpGet]
         [Route("GetRandom")]
         [Authorize]
@@ -93,6 +79,21 @@ namespace recipe_shuffler.Controllers
             if (newRecipeId != Guid.Empty)
             {
                 return this.Ok(newRecipeId);
+            }
+
+            return this.BadRequest();
+        }
+
+        [HttpPost]
+        [Route("LikeDislike")]
+        [Authorize]
+        public async Task<IActionResult> LikeOrDislike(Guid id)
+        {
+            bool result = await _service.LikeOrDislike(id);
+
+            if (result)
+            {
+                return this.Ok(result);
             }
 
             return this.BadRequest();

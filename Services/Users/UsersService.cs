@@ -3,8 +3,6 @@ using recipe_shuffler.DTO.Users;
 using recipe_shuffler.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using recipe_shuffler.Data;
 
 namespace recipe_shuffler.Services
@@ -25,6 +23,7 @@ namespace recipe_shuffler.Services
         public Guid GetCurrentUserId() 
         {
             Guid result = Guid.Empty;
+
             if (_httpContextAccessor.HttpContext != null)
             {
                 var value = _httpContextAccessor.HttpContext.User.FindFirst("userId").Value;

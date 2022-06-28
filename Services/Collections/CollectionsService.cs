@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using recipe_shuffler.Data;
 using recipe_shuffler.DataTransferObjects;
-using recipe_shuffler.DataTransferObjects.Users;
 using recipe_shuffler.Models;
 
 namespace recipe_shuffler.Services
