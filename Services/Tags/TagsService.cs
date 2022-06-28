@@ -18,7 +18,7 @@ namespace recipe_shuffler.Services.Tags
         public IQueryable<TagList> GetList()
         {
             IQueryable<Tag> query = _context.Tags
-                .Where(x => x.UserId == _usersService.GetMyId());
+                .Where(x => x.UserId == _usersService.GetCurrentUserId());
 
             IQueryable<TagList> list = query
                 .Select(x => new TagList()
@@ -54,7 +54,7 @@ namespace recipe_shuffler.Services.Tags
             bool result = false;
 
             Tag tag = _context.Tags.
-                Where(x => x.UserId == _usersService.GetMyId())
+                Where(x => x.UserId == _usersService.GetCurrentUserId())
                 .FirstOrDefault(x => x.Id == id);
 
             if (tag != null)
@@ -75,7 +75,7 @@ namespace recipe_shuffler.Services.Tags
                 Id = model.Id,
                 Name = model.Name,
                 Color = model.Color,
-                User = _context.Users.Find(_usersService.GetMyId())
+                User = _context.Users.Find(_usersService.GetCurrentUserId())
             };
 
             return tag;

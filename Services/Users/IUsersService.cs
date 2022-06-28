@@ -9,6 +9,6 @@ namespace recipe_shuffler.Services
 
         string UserAuth(string email, string password);
 
-        Guid GetMyId();
+        Guid GetCurrentUserId();
     }
 }

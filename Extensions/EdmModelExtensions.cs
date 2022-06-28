@@ -2,6 +2,7 @@
 using Microsoft.OData.ModelBuilder;
 using recipe_shuffler.DTO.Recipes;
 using recipe_shuffler.DTO.Tags;
+using recipe_shuffler.DataTransferObjects;
 
 namespace recipe_shuffler.Extensions
 {
@@ -13,6 +14,7 @@ namespace recipe_shuffler.Extensions
 
             odataBuilder.EntitySet<RecipeList>(nameof(RecipeList));
             odataBuilder.EntitySet<TagList>(nameof(TagList));
+            odataBuilder.EntitySet<CollectionList>(nameof(CollectionList));
 
             IEdmModel model = odataBuilder.GetEdmModel();
             odataBuilder.ValidateModel(model);

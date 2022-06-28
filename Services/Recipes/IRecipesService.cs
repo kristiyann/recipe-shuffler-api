@@ -17,5 +17,9 @@ namespace recipe_shuffler.Services
         Task<bool> Delete(Guid id);
 
         List<Recipe> GetRandom(RecipeCustomFilter customFilter);
+
+        Task<Guid> Copy(Guid id);
+
+        Task<bool> LikeOrDislike(Guid id);
     }
 }

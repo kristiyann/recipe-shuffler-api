@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using recipe_shuffler.Data;
 
@@ -11,9 +12,10 @@ using recipe_shuffler.Data;
 namespace recipe_shuffler.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220627160533_UserRecipexref")]
+    partial class UserRecipexref
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace recipe_shuffler.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("CollectionRecipe", b =>
-                {
-                    b.Property<Guid>("CollectionsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("RecipesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("CollectionsId", "RecipesId");
-
-                    b.HasIndex("RecipesId");
-
-                    b.ToTable("CollectionRecipe");
-                });
 
             modelBuilder.Entity("recipe_shuffler.Models.Collection", b =>
                 {
@@ -125,6 +112,9 @@ namespace recipe_shuffler.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CollectionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("CopiedFromId")
                         .HasColumnType("uniqueidentifier");
 
@@ -154,6 +144,8 @@ namespace recipe_shuffler.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CollectionId");
 
                     b.HasIndex("CopiedFromId");
 
@@ -226,21 +218,6 @@ namespace recipe_shuffler.Migrations
                     b.ToTable("RecipeTag");
                 });
 
-            modelBuilder.Entity("CollectionRecipe", b =>
-                {
-                    b.HasOne("recipe_shuffler.Models.Collection", null)
-                        .WithMany()
-                        .HasForeignKey("CollectionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("recipe_shuffler.Models.Recipe", null)
-                        .WithMany()
-                        .HasForeignKey("RecipesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("recipe_shuffler.Models.Collection", b =>
                 {
                     b.HasOne("recipe_shuffler.Models.User", "User")
@@ -294,6 +271,10 @@ namespace recipe_shuffler.Migrations
 
             modelBuilder.Entity("recipe_shuffler.Models.Recipe", b =>
                 {
+                    b.HasOne("recipe_shuffler.Models.Collection", null)
+                        .WithMany("Recipes")
+                        .HasForeignKey("CollectionId");
+
                     b.HasOne("recipe_shuffler.Models.Recipe", "CopiedFrom")
                         .WithMany()
                         .HasForeignKey("CopiedFromId");
@@ -333,6 +314,11 @@ namespace recipe_shuffler.Migrations
                         .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("recipe_shuffler.Models.Collection", b =>
+                {
+                    b.Navigation("Recipes");
                 });
 
             modelBuilder.Entity("recipe_shuffler.Models.Comment", b =>

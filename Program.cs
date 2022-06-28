@@ -7,6 +7,10 @@ using recipe_shuffler.Services.Tags;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using recipe_shuffler.Extensions;
@@ -74,6 +78,7 @@ builder.Services.AddControllers().AddOData(opt => opt.AddRouteComponents("api", 
 builder.Services.AddScoped<IRecipesService, RecipesService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<ITagsService, TagsService>();
+builder.Services.AddScoped<ICollectionsService, CollectionsService>();
 builder.Services.AddHttpContextAccessor(); // HttpContext
 
 // CORS

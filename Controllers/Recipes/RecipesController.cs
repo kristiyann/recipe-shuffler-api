@@ -35,7 +35,7 @@ namespace recipe_shuffler.Controllers
         [HttpGet]
         [Route("GetRandom")]
         [Authorize]
-        public IActionResult GetRandom([FromQuery] RecipeCustomFilter customFilter = null)
+        public IActionResult GetRandom([FromQuery] RecipeCustomFilter? customFilter = null)
         {
             if (!ModelState.IsValid)
             {
@@ -43,7 +43,6 @@ namespace recipe_shuffler.Controllers
             }
 
             return Ok(_service.GetRandom(customFilter));
-
         }
 
         [HttpPost]
@@ -70,20 +69,6 @@ namespace recipe_shuffler.Controllers
             return Ok(await _service.Update(model));
         }
 
-        //[HttpPut]
-        //[Route("InsertTag")]
-        //public async Task<IActionResult> InsertTag(TagInsertIntoRecipe model)
-        //{
-        //    return Ok(await _service.InsertTag(model));
-        //}
-
-        //[HttpPut]
-        //[Route("RemoveTag")]
-        //public async Task<IActionResult> RemoveTag(TagInsertIntoRecipe model)
-        //{
-        //    return Ok(await _service.RemoveTag(model));
-        //}
-
         [HttpDelete]
         [Authorize]
         public async Task<IActionResult> Delete(Guid id)
@@ -96,6 +81,21 @@ namespace recipe_shuffler.Controllers
             }
 
             return BadRequest("Invalid parameters");
+        }
+
+        [HttpPost]
+        [Route("Copy")]
+        [Authorize]
+        public async Task<IActionResult> Copy(Guid id)
+        {
+            Guid newRecipeId = await _service.Copy(id);
+
+            if (newRecipeId != Guid.Empty)
+            {
+                return this.Ok(newRecipeId);
+            }
+
+            return this.BadRequest();
         }
     }
 }

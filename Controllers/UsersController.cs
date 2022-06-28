@@ -20,14 +20,14 @@ namespace recipe_shuffler.Controllers
 
         //[HttpGet]
         //[AllowAnonymous]
-        //public IActionResult GetMyId()
+        //public IActionResult GetCurrentUserId()
         //{
         //    if (!this.ModelState.IsValid)
         //    {
         //        return BadRequest();
         //    }
 
-        //    Guid userId = _service.GetMyId();
+        //    Guid userId = _service.GetCurrentUserId();
         //    return Ok(userId);
         //}
 

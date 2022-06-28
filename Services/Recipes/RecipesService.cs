@@ -4,8 +4,9 @@ using recipe_shuffler.DataTransferObjects.Recipes;
 using recipe_shuffler.DTO;
 using recipe_shuffler.DTO.Recipes;
 using recipe_shuffler.DTO.Tags;
-using recipe_shuffler.DTO.Users;
+using recipe_shuffler.DataTransferObjects;
 using recipe_shuffler.Models;
+using recipe_shuffler.Models.CrossReference;
 
 namespace recipe_shuffler.Services
 {
@@ -19,41 +20,24 @@ namespace recipe_shuffler.Services
             _context = context;
             _usersService = usersService;
         }
+
         public IQueryable<RecipeList> GetList(RecipeCustomFilter customFilter)
         {
+            List<Guid> userLikesIds = this.GetCurrentUserLikesIds();
+
             IQueryable<Recipe> query = this.GenerateInitialQuery();
 
             query = this.ApplyCustomFilter(query, customFilter);
 
-            IQueryable<RecipeList> list = query
-                .Select(x => new RecipeList()
-                {
-                    Id = x.Id,
-                    Title = x.Title,
-                    Image = x.Image,
-                    Ingredients = x.Ingredients,
-                    Instructions = x.Instructions,
-                    IsPublic = x.IsPublic,
-                    Tags = x.Tags
-                    .Select(y => new TagList()
-                    {
-                        Id = y.Id,
-                        Name = y.Name,
-                        Color = y.Color
-                    }),
-                    User = new GenericComboBoxUser()
-                    {
-                        Value = x.UserId,
-                        Text = x.User.Username
-                    }
-                });
+            IQueryable<RecipeList> list = this.ConvertToListModel(query, userLikesIds);
 
             return list;
         }
 
         public async Task<Recipe> Insert(RecipeInsert model)
         {
-            Recipe recipe = ConvertInsertModelToDbObj(model);
+            Recipe recipe = ConvertToDbObj(model);
+            recipe.CreateDate = DateTime.Now;
 
             if (model != null && model.TagIds != null)
             {
@@ -92,7 +76,7 @@ namespace recipe_shuffler.Services
             }
             else
             {
-                recipe = await ConvertEditModelToDbObj(model);
+                recipe = await ConvertToDbObj(model);
             }
 
             _context.Recipes.Update(recipe);
@@ -141,6 +125,84 @@ namespace recipe_shuffler.Services
             return recipeCollection;
         }
 
+        public async Task<Guid> Copy(Guid id)
+        {
+            Recipe originalRecipe = this.GenerateInitialQuery(id)
+                .Include(r => r.Tags)
+                .FirstOrDefault();
+
+            if (originalRecipe is not null)
+            {
+                Recipe newRecipe = new()
+                {
+                    Title = originalRecipe.Title,
+                    Ingredients = originalRecipe.Ingredients,
+                    Image = originalRecipe.Image,
+                    IsPublic = true,
+                    Instructions = originalRecipe.Instructions,
+                    CopiedFromId = id,
+                    UserId = _usersService.GetCurrentUserId()
+                };
+
+                await _context.Recipes.AddAsync(newRecipe);
+
+                foreach (Tag tag in originalRecipe.Tags)
+                {
+                    Tag newTag = new()
+                    {
+                        Name = tag.Name,
+                        Color = tag.Color,
+                        UserId = _usersService.GetCurrentUserId(),
+                    };
+
+                    await _context.Tags.AddAsync(newTag);
+
+                    newRecipe.Tags.Add(newTag);
+                }
+
+                await _context.SaveChangesAsync();
+
+                return newRecipe.Id;
+            }
+
+            return Guid.Empty;
+        }
+
+        public async Task<bool> LikeOrDislike(Guid id)
+        {
+            bool result = false;
+
+            Recipe recipe = this.GenerateInitialQuery(id)
+                .FirstOrDefault();
+
+            if (recipe != null)
+            { 
+                UserLikedRecipe query = _context.UserLikedRecipes.Where(x => x.RecipeId == recipe.Id)
+                    .Where(x => x.UserId == _usersService.GetCurrentUserId())
+                    .FirstOrDefault();
+
+                if (query == null)
+                {
+                    UserLikedRecipe userLike = new()
+                    {
+                        RecipeId = recipe.Id,
+                        UserId = _usersService.GetCurrentUserId(),
+                        CreateDate = DateTime.Now
+                    };
+
+                    await _context.UserLikedRecipes.AddAsync(userLike);
+                }
+                else {
+                    _context.UserLikedRecipes.Remove(query);
+                }
+
+                await _context.SaveChangesAsync();
+                result = true;
+            }
+
+            return result;
+        }
+
         private static Recipe CustomUpdate(Recipe recipe, RecipeEdit model, List<Tag> tags)
         {
             foreach (Tag tag in recipe.Tags.ToList())
@@ -178,12 +240,13 @@ namespace recipe_shuffler.Services
 
             return recipe;
         }
+        
 
         #region InitialQuery
 
         private IQueryable<Recipe> GenerateInitialQuery(Guid? id = null, Guid? userId = null)
         {
-            IQueryable<Recipe> query = _context.Recipes.Where(x => x.UserId == _usersService.GetMyId());
+            IQueryable<Recipe> query = _context.Recipes.Where(x => x.UserId == _usersService.GetCurrentUserId());
 
             if (userId != null)
             {
@@ -201,7 +264,7 @@ namespace recipe_shuffler.Services
         #endregion
 
         #region Converters
-        private Recipe ConvertInsertModelToDbObj(RecipeInsert model)
+        private Recipe ConvertToDbObj(RecipeInsert model)
         {
             Recipe recipe = new()
             {
@@ -209,14 +272,15 @@ namespace recipe_shuffler.Services
                 Image = model.Image,
                 Instructions = model.Instructions,
                 Ingredients = model.Ingredients,
-                User = _context.Users.Find(_usersService.GetMyId()),
-                Tags = new HashSet<Tag>()
+                User = _context.Users.Find(_usersService.GetCurrentUserId()),
+                Tags = new HashSet<Tag>(),
+                IsPublic = model.IsPublic
             };
 
             return recipe;
         }
 
-        private async Task<Recipe> ConvertEditModelToDbObj(RecipeEdit model)
+        private async Task<Recipe> ConvertToDbObj(RecipeEdit model)
         {
             Recipe recipe = new()
             {
@@ -226,15 +290,47 @@ namespace recipe_shuffler.Services
                 Instructions = model.Instructions,
                 Ingredients = model.Ingredients,
                 // UserId = model.UserId,
-                User = await _context.Users.FindAsync(_usersService.GetMyId())
+                User = await _context.Users.FindAsync(_usersService.GetCurrentUserId()),
+                IsPublic = model.IsPublic
             };
 
-            //if (model.TagIds != null)
-            //{
-            //    recipe.Tags = new HashSet<Tag>();
-            //}
-
             return recipe;
+        }
+
+        private IQueryable<RecipeList> ConvertToListModel(IQueryable<Recipe> query, List<Guid> userLikesIds)
+        {
+            IQueryable<RecipeList> list = query
+                .Select(x => new RecipeList()
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Image = x.Image,
+                    Ingredients = x.Ingredients,
+                    Instructions = x.Instructions,
+                    IsPublic = x.IsPublic,
+                    Tags = x.Tags
+                    .Select(y => new TagList()
+                    {
+                        Id = y.Id,
+                        Name = y.Name,
+                        Color = y.Color
+                    }),
+                    User = new GenericComboBoxImage()
+                    {
+                        Value = x.UserId,
+                        Text = x.User.Username
+                    },
+                    CopiedFrom = x.CopiedFrom != null ? new GenericComboBox()
+                    {
+                        Text = x.CopiedFrom.Title + " by @" + x.CopiedFrom.User.Username,
+                        Value = x.Id
+                    } : null,
+                    CreateDate = x.CreateDate,
+                    LikedByMe = userLikesIds.Any(z => z == x.Id),
+                    LikeCount = x.UserLikedRecipes.Count
+                });
+
+            return list;
         }
 
         #endregion
@@ -261,12 +357,25 @@ namespace recipe_shuffler.Services
                 }
             }
 
-            if (customFilter == null || customFilter.UserId != this._usersService.GetMyId())
+            if (customFilter == null || customFilter.UserId != this._usersService.GetCurrentUserId())
             {
                 query = query.Where(x => x.IsPublic);
             }
 
             return query;
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private List<Guid> GetCurrentUserLikesIds() {
+            List<Guid> userLikesIds = _context.UserLikedRecipes
+                .Where(u => u.UserId == _usersService.GetCurrentUserId())
+                .Select(z => z.RecipeId)
+                .ToList();
+
+            return userLikesIds;
         }
 
         #endregion

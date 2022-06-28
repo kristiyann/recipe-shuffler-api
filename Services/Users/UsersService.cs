@@ -1,9 +1,11 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using recipe_shuffler.Data;
 using recipe_shuffler.DTO.Users;
 using recipe_shuffler.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using recipe_shuffler.Data;
 
 namespace recipe_shuffler.Services
 {
@@ -20,7 +22,7 @@ namespace recipe_shuffler.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public Guid GetMyId() 
+        public Guid GetCurrentUserId() 
         {
             Guid result = Guid.Empty;
             if (_httpContextAccessor.HttpContext != null)
@@ -44,7 +46,7 @@ namespace recipe_shuffler.Services
 
         public string UserAuth(string email, string password)
         {
-            User? user = _context.Users
+            User user = _context.Users
                 .Where(x => x.Email == email)
                 .FirstOrDefault(x => x.Active);
 
@@ -94,5 +96,30 @@ namespace recipe_shuffler.Services
 
             return jwt;
         }
+
+        // private RefreshToken GetRefreshToken()
+        // {
+        //     RefreshToken token = new()
+        //     {
+        //         Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+        //         CreateDate = DateTime.Now,
+        //         ExpireDate = DateTime.Now.AddDays(7)
+        //     };
+        //
+        //     return token;
+        // }
+
+        // private void SetRefreshToken(User user, RefreshToken token)
+        // {
+        //     CookieOptions cookieOptions = new CookieOptions()
+        //     {
+        //         HttpOnly = true,
+        //         Expires = token.ExpireDate
+        //     };
+        //     
+        //     IResponseCookies
+        //
+        //     user.RefreshToken = token;
+        // }
     }
 }

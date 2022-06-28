@@ -10,6 +10,8 @@
 
         public string? Instructions { get; set; } = string.Empty;
 
+        public bool IsPublic { get; set; }
+
         public IEnumerable<Guid>? TagIds { get; set; }
     }
 }

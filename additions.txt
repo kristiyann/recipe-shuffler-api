@@ -1,5 +1,8 @@
 ﻿-UserAuth is now a POST method;
 -Jwt tokens - receive one on login, have to pass to header in the form of: Bearer {token};
+
+:development
 -Recipe.GetRandom() now returns a collection and can take in a custom filter param;
 -Recipe and Tag GetList() now use separate controllers with full Odata;
 -Recipe.GetList() now takes in custom filter param;
+-Recipe.Copy()

@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using recipe_shuffler.Models.CrossReference;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace recipe_shuffler.Models
 {
@@ -9,6 +9,8 @@ namespace recipe_shuffler.Models
         public Recipe()
         {
             Tags = new HashSet<Tag>();
+            UserLikedRecipes = new HashSet<UserLikedRecipe>();
+            Collections = new HashSet<Collection>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -30,5 +32,15 @@ namespace recipe_shuffler.Models
         public User User { get; set; }
 
         public ICollection<Tag> Tags { get; set; }
+
+        public Guid? CopiedFromId { get; set; }
+
+        public Recipe? CopiedFrom { get; set; }
+
+        public DateTime CreateDate { get; set; }
+
+        public ICollection<Collection> Collections { get; set; }
+
+        public ICollection<UserLikedRecipe> UserLikedRecipes { get; set; }
     }
 }
