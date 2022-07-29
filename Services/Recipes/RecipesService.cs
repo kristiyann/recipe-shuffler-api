@@ -18,10 +18,21 @@ namespace recipe_shuffler.Services
             _context = context;
             _usersService = usersService;
         }
-        public IQueryable<RecipeList> GetList()
+        public IQueryable<RecipeList> GetList(bool shuffle)
         {
-            IQueryable<RecipeList> list = _context.Recipes
+            IQueryable<Recipe> query = _context.Recipes
                 .Where(x => x.UserId == _usersService.GetMyId())
+                .Include(x => x.Tags)
+                .Include(x => x.User);
+
+            if (shuffle)
+            {
+                List<Recipe> tempList = query.ToList();
+                tempList.ShuffleCollection();
+                query = tempList.AsQueryable();
+            }
+
+            IQueryable<RecipeList> list = query
                 .Select(x => new RecipeList()
                 {
                     Id = x.Id,
@@ -114,38 +125,37 @@ namespace recipe_shuffler.Services
             return result;
         }
 
-        public List<RecipeList> Shuffle(RecipeCustomFilter customFilter)
-        {
-            IQueryable<Recipe> query = _context.Recipes
-                .Where(x => x.UserId == _usersService.GetMyId());
+        //public List<RecipeList> Shuffle(RecipeCustomFilter customFilter)
+        //{
+        //    IQueryable<Recipe> query = _context.Recipes
+        //        .Where(x => x.UserId == _usersService.GetMyId());
 
-            query = this.ApplyCustomFilter(query, customFilter);
+        //    query = this.ApplyCustomFilter(query, customFilter);
 
-            List<RecipeList> list = _context.Recipes
-                .Where(x => x.UserId == _usersService.GetMyId())
-                .Select(x => new RecipeList()
-                {
-                    Id = x.Id,
-                    Title = x.Title,
-                    Image = x.Image,
-                    Ingredients = x.Ingredients,
-                    Instructions = x.Instructions,
-                    Calories = x.Calories,
-                    Protein = x.Protein,
-                    Link = x.Link ?? string.Empty,
-                    Tags = x.Tags
-                    .Select(y => new TagList()
-                    {
-                        Id = y.Id,
-                        Name = y.Name,
-                        Color = y.Color
-                    })
-                }).ToList();
+        //    List<RecipeList> list = query
+        //        .Select(x => new RecipeList()
+        //        {
+        //            Id = x.Id,
+        //            Title = x.Title,
+        //            Image = x.Image,
+        //            Ingredients = x.Ingredients,
+        //            Instructions = x.Instructions,
+        //            Calories = x.Calories,
+        //            Protein = x.Protein,
+        //            Link = x.Link ?? string.Empty,
+        //            Tags = x.Tags
+        //            .Select(y => new TagList()
+        //            {
+        //                Id = y.Id,
+        //                Name = y.Name,
+        //                Color = y.Color
+        //            })
+        //        }).ToList();
 
-            list.ShuffleCollection();
+        //    list.ShuffleCollection();
 
-            return list;
-        }
+        //    return list;
+        //}
 
         public Recipe GetRandom()
         {

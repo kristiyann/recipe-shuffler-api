@@ -17,20 +17,20 @@ namespace recipe_shuffler.Controllers
             _service = service;
         }
 
-        [HttpGet]
-        [Route("Shuffle")]
-        [Authorize]
-        public IActionResult ShuffleRecipes([FromQuery] RecipeCustomFilter customFilter = null)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
+        //[HttpGet]
+        //[Route("Shuffle")]
+        //[Authorize]
+        //public IActionResult ShuffleRecipes([FromQuery]RecipeCustomFilter customFilter = null)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            List<RecipeList> list = _service.Shuffle(customFilter);
+        //    List<RecipeList> list = _service.Shuffle(customFilter);
 
-            return Ok(list);
-        }
+        //    return Ok(list);
+        //}
 
         [HttpGet]
         [Route("GetRandom")]

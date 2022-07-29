@@ -7,7 +7,7 @@ namespace recipe_shuffler.Services
 {
     public interface IRecipesService
     {
-        IQueryable<RecipeList> GetList();
+        IQueryable<RecipeList> GetList(bool shuffle);
 
         Task<Recipe> Insert(RecipeInsert recipe);
 
@@ -17,6 +17,6 @@ namespace recipe_shuffler.Services
 
         Recipe GetRandom();
 
-        List<RecipeList> Shuffle(RecipeCustomFilter customFilter);
+        //List<RecipeList> Shuffle(RecipeCustomFilter customFilter);
     }
 }

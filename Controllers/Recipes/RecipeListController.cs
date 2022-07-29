@@ -21,14 +21,14 @@ namespace recipe_shuffler.Controllers
 
         [EnableQuery(EnsureStableOrdering = false)]
         [Authorize]
-        public IActionResult GetRecipeList(ODataQueryOptions<RecipeList> queryOptions)
+        public IActionResult GetRecipeList(ODataQueryOptions<RecipeList> queryOptions, bool shuffle = false)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            IQueryable<RecipeList> list = _service.GetList();
+            IQueryable<RecipeList> list = _service.GetList(shuffle);
             return Ok(list);
         }
     }
