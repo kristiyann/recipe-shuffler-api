@@ -28,16 +28,16 @@ namespace recipe_shuffler.Services
                     Image = x.Image,
                     Ingredients = x.Ingredients,
                     Instructions = x.Instructions,
+                    Calories = x.Calories,
+                    Protein = x.Protein,
+                    Category = x.Category,
                     Tags = x.Tags
                     .Select(y => new TagList()
                     {
                         Id = y.Id,
                         Name = y.Name,
                         Color = y.Color
-                    }),
-                    Calories = x.Calories,
-                    Protein = x.Protein,
-                    Category = x.Category
+                    })
                 });
 
             return list;

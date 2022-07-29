@@ -1,38 +1,39 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OData.Edm;
-using recipe_shuffler.Data;
-using recipe_shuffler.Services;
-using Microsoft.AspNetCore.OData;
-using Microsoft.OData.ModelBuilder;
-using recipe_shuffler.Services.Tags;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.OData;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Filters;
+using recipe_shuffler.Data;
 using recipe_shuffler.DTO.Recipes;
 using recipe_shuffler.DTO.Tags;
+using recipe_shuffler.Services;
+using recipe_shuffler.Services.Tags;
+using Swashbuckle.AspNetCore.Filters;
+using System.Text;
 
 
 // OData
 static IEdmModel GetEdmModel()
 {
     ODataConventionModelBuilder builder = new();
-    builder.EntitySet<RecipeList>(nameof(RecipeList));
+    builder.EntitySet<RecipeList>(nameof(RecipeList)); 
     builder.EntitySet<TagList>(nameof(TagList));
 
     builder.EnableLowerCamelCase();
-    var model = builder.GetEdmModel();
+    IEdmModel? model = builder.GetEdmModel();
     builder.ValidateModel(model);
     return model;
 }
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 // DBContext
-builder.Services.AddDbContext<DataContext>(options => {
+builder.Services.AddDbContext<DataContext>(options =>
+{
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
@@ -79,7 +80,7 @@ builder.Services.AddScoped<ITagsService, TagsService>();
 builder.Services.AddHttpContextAccessor(); // HttpContext
 
 // CORS
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+string? MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 builder.Services.AddCors(options =>
 {
@@ -92,7 +93,7 @@ builder.Services.AddCors(options =>
                       });
 });
 
-var app = builder.Build();
+WebApplication? app = builder.Build();
 
 app.UseCors(MyAllowSpecificOrigins);
 
