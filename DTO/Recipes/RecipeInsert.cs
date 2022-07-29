@@ -1,6 +1,4 @@
-﻿using recipe_shuffler.Enums;
-
-namespace recipe_shuffler.DTO
+﻿namespace recipe_shuffler.DTO
 {
     public class RecipeInsert
     {
@@ -18,6 +16,5 @@ namespace recipe_shuffler.DTO
 
         public uint Protein { get; set; }
 
-        public Category Category { get; set; }
     }
 }

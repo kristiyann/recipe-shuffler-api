@@ -1,6 +1,5 @@
 ﻿using Microsoft.OData.ModelBuilder;
 using recipe_shuffler.DTO.Tags;
-using recipe_shuffler.Enums;
 
 namespace recipe_shuffler.DTO.Recipes
 {
@@ -23,6 +22,5 @@ namespace recipe_shuffler.DTO.Recipes
 
         public uint Protein { get; set; }
 
-        public Category Category { get; set; }
     }
 }

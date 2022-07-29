@@ -31,9 +31,6 @@ namespace recipe_shuffler.Migrations
                     b.Property<long>("Calories")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
-
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
@@ -73,7 +70,7 @@ namespace recipe_shuffler.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -139,9 +136,7 @@ namespace recipe_shuffler.Migrations
                 {
                     b.HasOne("recipe_shuffler.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
