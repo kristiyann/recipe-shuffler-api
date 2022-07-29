@@ -1,4 +1,6 @@
-﻿namespace recipe_shuffler.DTO.Recipes
+﻿using recipe_shuffler.Enums;
+
+namespace recipe_shuffler.DTO.Recipes
 {
     public class RecipeEdit
     {
@@ -9,5 +11,8 @@
         public string? Instructions { get; set; } = string.Empty;
         public Guid UserId { get; set; }
         public IEnumerable<Guid>? TagIds { get; set; }
+        public uint Calories { get; set; }
+        public uint Protein { get; set; }
+        public Category Category { get; set; }
     }
 }

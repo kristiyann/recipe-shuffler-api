@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using recipe_shuffler.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -17,6 +18,12 @@ namespace recipe_shuffler.Models
         public string? Ingredients { get; set; } = string.Empty;
 
         public string? Instructions { get; set; } = string.Empty;
+
+        public uint Calories { get; set; }
+
+        public uint Protein { get; set; }
+
+        public Category Category { get; set; }
 
         public Guid UserId { get; set; }
 

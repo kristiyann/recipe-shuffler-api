@@ -4,7 +4,6 @@ using recipe_shuffler.DTO;
 using recipe_shuffler.DTO.Recipes;
 using recipe_shuffler.DTO.Tags;
 using recipe_shuffler.Models;
-using recipe_shuffler.Services.Tags;
 
 namespace recipe_shuffler.Services
 {
@@ -35,7 +34,10 @@ namespace recipe_shuffler.Services
                         Id = y.Id,
                         Name = y.Name,
                         Color = y.Color
-                    })
+                    }),
+                    Calories = x.Calories,
+                    Protein = x.Protein,
+                    Category = x.Category
                 });
 
             return list;
@@ -164,6 +166,18 @@ namespace recipe_shuffler.Services
             {
                 recipe.Ingredients = model.Ingredients;
             }
+            if (recipe.Calories != model.Calories)
+            {
+                recipe.Calories = model.Calories;
+            }
+            if (recipe.Protein != model.Protein)
+            {
+                recipe.Protein = model.Protein;
+            }
+            if (recipe.Category != model.Category)
+            {
+                recipe.Category = model.Category;
+            }
 
             return recipe;
         }
@@ -178,7 +192,10 @@ namespace recipe_shuffler.Services
                 Instructions = model.Instructions,
                 Ingredients = model.Ingredients,
                 User = _context.Users.Find(_usersService.GetMyId()),
-                Tags = new HashSet<Tag>()
+                Tags = new HashSet<Tag>(),
+                Protein = model.Protein,
+                Calories = model.Calories,
+                Category = model.Category
             };
 
             return recipe;
@@ -194,7 +211,10 @@ namespace recipe_shuffler.Services
                 Instructions = model.Instructions,
                 Ingredients = model.Ingredients,
                 // UserId = model.UserId,
-                User = await _context.Users.FindAsync(_usersService.GetMyId())
+                User = await _context.Users.FindAsync(_usersService.GetMyId()),
+                Protein = model.Protein,
+                Calories = model.Calories,
+                Category = model.Category
             };
 
             //if (model.TagIds != null)

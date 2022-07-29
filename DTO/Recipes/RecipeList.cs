@@ -1,4 +1,5 @@
 ﻿using recipe_shuffler.DTO.Tags;
+using recipe_shuffler.Enums;
 
 namespace recipe_shuffler.DTO.Recipes
 {
@@ -15,5 +16,11 @@ namespace recipe_shuffler.DTO.Recipes
         public string? Instructions { get; set; } = string.Empty;
 
         public IEnumerable<TagList>? Tags { get; set; }
+
+        public uint Calories { get; set; }
+
+        public uint Protein { get; set; }
+
+        public Category Category { get; set; }
     }
 }
