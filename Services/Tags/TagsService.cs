@@ -15,10 +15,28 @@ namespace recipe_shuffler.Services.Tags
             _usersService = usersService;
         }
 
-        public IQueryable<TagList> GetList()
+        public IQueryable<TagList> GetList(TagCustomFilter? customFilter)
         {
-            IQueryable<Tag> query = _context.Tags
-                .Where(x => x.UserId == _usersService.GetMyId());
+            IQueryable<Tag> query = _context.Tags;
+
+            if (customFilter != null)
+            {
+                if (customFilter.IsPublic != null)
+                {
+                    if (customFilter.IsPublic.Value)
+                    {
+                        query = query.Where(x => x.UserId == null);
+                    }
+                    else
+                    {
+                        query = query.Where(x => x.UserId == _usersService.GetMyId());
+                    }
+                }
+            }
+            else 
+            {
+                query = query.Where(x => x.UserId == _usersService.GetMyId());
+            }
 
             IQueryable<TagList> list = query
                 .Select(x => new TagList()

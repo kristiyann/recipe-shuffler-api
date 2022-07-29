@@ -30,6 +30,7 @@ namespace recipe_shuffler.Services
                     Instructions = x.Instructions,
                     Calories = x.Calories,
                     Protein = x.Protein,
+                    Link = x.Link,
                     Tags = x.Tags
                     .Select(y => new TagList()
                     {
@@ -173,6 +174,10 @@ namespace recipe_shuffler.Services
             {
                 recipe.Protein = model.Protein;
             }
+            if (recipe.Link != model.Link)
+            {
+                recipe.Link = model.Link;
+            }
 
             return recipe;
         }
@@ -190,6 +195,7 @@ namespace recipe_shuffler.Services
                 Tags = new HashSet<Tag>(),
                 Protein = model.Protein,
                 Calories = model.Calories,
+                Link = model.Link
             };
 
             return recipe;
@@ -208,6 +214,7 @@ namespace recipe_shuffler.Services
                 User = await _context.Users.FindAsync(_usersService.GetMyId()),
                 Protein = model.Protein,
                 Calories = model.Calories,
+                Link = model.Link
             };
 
             //if (model.TagIds != null)

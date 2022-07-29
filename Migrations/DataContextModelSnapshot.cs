@@ -40,6 +40,10 @@ namespace recipe_shuffler.Migrations
                     b.Property<string>("Instructions")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Link")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long>("Protein")
                         .HasColumnType("bigint");
 

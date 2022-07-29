@@ -15,6 +15,7 @@
         public uint Calories { get; set; }
 
         public uint Protein { get; set; }
+        public string Link { get; set; }
 
     }
 }
