@@ -1,4 +1,5 @@
-﻿using recipe_shuffler.DTO.Users;
+﻿using recipe_shuffler.DTO.Security;
+using recipe_shuffler.DTO.Users;
 using recipe_shuffler.Models;
 
 namespace recipe_shuffler.Services
@@ -7,7 +8,7 @@ namespace recipe_shuffler.Services
     {
         Task<Guid> Insert(User user);
 
-        string UserAuth(string email, string password);
+        TokenResponse UserAuth(string email, string password);
 
         Guid GetMyId();
     }

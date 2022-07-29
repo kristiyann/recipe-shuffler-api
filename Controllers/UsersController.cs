@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using recipe_shuffler.DTO;
+using recipe_shuffler.DTO.Security;
 using recipe_shuffler.DTO.Users;
 using recipe_shuffler.Models;
 using recipe_shuffler.Services;
@@ -56,9 +57,9 @@ namespace recipe_shuffler.Controllers
                 return BadRequest();
             }
 
-            string token = _service.UserAuth(userAuth.Email, userAuth.Password);
+            TokenResponse token = _service.UserAuth(userAuth.Email, userAuth.Password);
 
-            if (!string.IsNullOrEmpty(token))
+            if (!string.IsNullOrEmpty(token.Token))
             {
                 return Ok(token);
             }

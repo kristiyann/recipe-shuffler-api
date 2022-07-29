@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using recipe_shuffler.Data;
+using recipe_shuffler.DTO.Security;
 using recipe_shuffler.DTO.Users;
 using recipe_shuffler.Models;
 using System.IdentityModel.Tokens.Jwt;
@@ -42,27 +43,32 @@ namespace recipe_shuffler.Services
             return user.Id;
         }
 
-        public string UserAuth(string email, string password)
+        public TokenResponse UserAuth(string email, string password)
         {
             User? user = _context.Users
                 .Where(x => x.Email == email)
                 .FirstOrDefault(x => x.Active);
 
+            TokenResponse tokenResp = new();
+
             if (user != null)
             {
+
                 if (BCrypt.Net.BCrypt.Verify(password, user.Password))
                 {
-                    return CreateJwtToken(user);
+                    tokenResp.Token = CreateJwtToken(user);
                 }
                 else
                 {
-                    return string.Empty;
+                    tokenResp.Token = string.Empty;
                 }
             }
             else
             {
-                return string.Empty;
+                tokenResp.Token = string.Empty;
             }
+
+            return tokenResp;
         }
 
         private static User ConvertEditToDbObj(UserEdit model)
