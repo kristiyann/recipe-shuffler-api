@@ -11,6 +11,6 @@
         public IEnumerable<Guid>? TagIds { get; set; }
         public uint Calories { get; set; }
         public uint Protein { get; set; }
-        public string Link { get; set; }
+        public string? Link { get; set; }
     }
 }

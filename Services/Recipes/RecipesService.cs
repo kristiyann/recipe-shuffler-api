@@ -30,7 +30,7 @@ namespace recipe_shuffler.Services
                     Instructions = x.Instructions,
                     Calories = x.Calories,
                     Protein = x.Protein,
-                    Link = x.Link,
+                    Link = x.Link ?? string.Empty,
                     Tags = x.Tags
                     .Select(y => new TagList()
                     {

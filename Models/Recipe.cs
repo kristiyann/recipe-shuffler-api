@@ -29,6 +29,6 @@ namespace recipe_shuffler.Models
 
         public HashSet<Tag>? Tags { get; set; }
 
-        public string Link { get; set; }
+        public string? Link { get; set; }
     }
 }
