@@ -23,3 +23,9 @@ dotnet_diagnostic.IDE0055.severity = none
 
 # CS8601: Possible null reference assignment.
 dotnet_diagnostic.CS8601.severity = none
+
+# IDE0003: Remove qualification
+dotnet_diagnostic.IDE0003.severity = none
+
+# CS8625: Cannot convert null literal to non-nullable reference type.
+dotnet_diagnostic.CS8625.severity = none

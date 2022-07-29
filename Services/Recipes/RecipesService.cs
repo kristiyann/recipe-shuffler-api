@@ -3,6 +3,7 @@ using recipe_shuffler.Data;
 using recipe_shuffler.DTO;
 using recipe_shuffler.DTO.Recipes;
 using recipe_shuffler.DTO.Tags;
+using recipe_shuffler.Helpers;
 using recipe_shuffler.Models;
 
 namespace recipe_shuffler.Services
@@ -111,6 +112,39 @@ namespace recipe_shuffler.Services
             }
 
             return result;
+        }
+
+        public List<RecipeList> Shuffle(RecipeCustomFilter customFilter)
+        {
+            IQueryable<Recipe> query = _context.Recipes
+                .Where(x => x.UserId == _usersService.GetMyId());
+
+            query = this.ApplyCustomFilter(query, customFilter);
+
+            List<RecipeList> list = _context.Recipes
+                .Where(x => x.UserId == _usersService.GetMyId())
+                .Select(x => new RecipeList()
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Image = x.Image,
+                    Ingredients = x.Ingredients,
+                    Instructions = x.Instructions,
+                    Calories = x.Calories,
+                    Protein = x.Protein,
+                    Link = x.Link ?? string.Empty,
+                    Tags = x.Tags
+                    .Select(y => new TagList()
+                    {
+                        Id = y.Id,
+                        Name = y.Name,
+                        Color = y.Color
+                    })
+                }).ToList();
+
+            list.ShuffleCollection();
+
+            return list;
         }
 
         public Recipe GetRandom()
@@ -223,6 +257,28 @@ namespace recipe_shuffler.Services
             //}
 
             return recipe;
+        }
+
+        #endregion
+
+        #region customFilter
+
+        private IQueryable<Recipe> ApplyCustomFilter(IQueryable<Recipe> query, RecipeCustomFilter customFilter)
+        {
+            if (customFilter != null)
+            {
+                if (customFilter.Ingredients != null)
+                {
+                    query = query.Where(x => x.Ingredients.ToLower().Contains(customFilter.Ingredients.ToLower()));
+                }
+
+                if (customFilter.TagIds != null)
+                {
+                    query = query.Where(x => customFilter.TagIds.Any(q => x.Tags.Any(z => z.Id == q)));
+                }
+            }
+
+            return query;
         }
 
         #endregion

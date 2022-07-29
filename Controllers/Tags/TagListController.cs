@@ -23,7 +23,7 @@ namespace recipe_shuffler.Controllers
 
         [EnableQuery(EnsureStableOrdering = false)]
         [Authorize]
-        public IActionResult GetTagList(ODataQueryOptions<TagList> queryOptions, [FromQuery] TagCustomFilter? customFilter = null)
+        public IActionResult GetTagList(ODataQueryOptions<TagList> queryOptions, [FromQuery] TagCustomFilter customFilter = null)
         {
             if (!ModelState.IsValid)
             {

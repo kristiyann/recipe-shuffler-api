@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Query;
-using Microsoft.AspNetCore.OData.Routing.Controllers;
 using recipe_shuffler.DTO;
 using recipe_shuffler.DTO.Recipes;
-using recipe_shuffler.Models;
 using recipe_shuffler.Services;
 
 namespace recipe_shuffler.Controllers
@@ -20,19 +17,20 @@ namespace recipe_shuffler.Controllers
             _service = service;
         }
 
-        //[HttpGet]
-        //[EnableQuery()]
-        //[Authorize]
-        //public IActionResult GetRecipeList(ODataQueryOptions<Recipe> queryOptions)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest();
-        //    }
+        [HttpGet]
+        [Route("Shuffle")]
+        [Authorize]
+        public IActionResult ShuffleRecipes([FromQuery] RecipeCustomFilter customFilter = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
 
-        //    IQueryable<RecipeList> list = _service.GetList();
-        //    return Ok(list);
-        //}
+            List<RecipeList> list = _service.Shuffle(customFilter);
+
+            return Ok(list);
+        }
 
         [HttpGet]
         [Route("GetRandom")]
@@ -104,7 +102,10 @@ namespace recipe_shuffler.Controllers
                 {
                     return Ok(result);
                 }
-                else return BadRequest("Invalid parameters");
+                else
+                {
+                    return BadRequest("Invalid parameters");
+                }
             }
             else
             {

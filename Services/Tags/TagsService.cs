@@ -15,7 +15,7 @@ namespace recipe_shuffler.Services.Tags
             _usersService = usersService;
         }
 
-        public IQueryable<TagList> GetList(TagCustomFilter? customFilter)
+        public IQueryable<TagList> GetList(TagCustomFilter customFilter)
         {
             IQueryable<Tag> query = _context.Tags;
 
