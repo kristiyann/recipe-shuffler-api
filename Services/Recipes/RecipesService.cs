@@ -64,6 +64,7 @@ namespace recipe_shuffler.Services
             {
                 List<Tag> tags = await _context.Tags
                     .Where(x => model.TagIds.Any(f => f == x.Id))
+                    .Where(x => x.UserId == _usersService.GetMyId() || x.UserId == null)
                     .ToListAsync();
 
                 foreach (Tag tagObject in tags)
@@ -92,7 +93,7 @@ namespace recipe_shuffler.Services
 
                 List<Tag> tags = await _context.Tags
                     .Where(x => model.TagIds.Any(f => f == x.Id))
-                    .Where(x => x.UserId == _usersService.GetMyId())
+                    .Where(x => x.UserId == _usersService.GetMyId() || x.UserId == null)
                     .ToListAsync();
 
                 recipe = CustomUpdate(recipe, model, tags);
