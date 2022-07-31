@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using recipe_shuffler.Services.Tags;
 using recipe_shuffler.DTO.Tags;
+using recipe_shuffler.Services.Tags;
 
 namespace recipe_shuffler.Controllers
 {
@@ -21,13 +21,8 @@ namespace recipe_shuffler.Controllers
 
         [EnableQuery(EnsureStableOrdering = false)]
         [Authorize]
-        public IActionResult GetTagList(ODataQueryOptions<TagList> queryOptions, [FromQuery]TagCustomFilter? customFilter = null)
+        public IActionResult GetTagList(ODataQueryOptions<TagList> queryOptions, [FromQuery] TagCustomFilter? customFilter = null)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             IQueryable<TagList> list = _service.GetList(customFilter);
 
             return Ok(list);

@@ -48,7 +48,8 @@ namespace recipe_shuffler.Services
                     {
                         Id = y.Id,
                         Name = y.Name,
-                        Color = y.Color
+                        Color = y.Color,
+                        IsCategory = y.UserId == null ? true : false
                     })
                 });
 
@@ -86,17 +87,19 @@ namespace recipe_shuffler.Services
                 recipe = _context.Recipes
                 .Include(x => x.Tags)
                 .Include(x => x.User)
+                .Where(x => x.UserId == _usersService.GetMyId())
                 .Single(x => x.Id == model.Id);
 
                 List<Tag> tags = await _context.Tags
                     .Where(x => model.TagIds.Any(f => f == x.Id))
+                    .Where(x => x.UserId == _usersService.GetMyId())
                     .ToListAsync();
 
                 recipe = CustomUpdate(recipe, model, tags);
             }
             else
             {
-                recipe = await ConvertEditModelToDbObj(model);
+                recipe = this.ConvertEditModelToDbObj(model);
             }
 
             _context.Recipes.Update(recipe);
@@ -235,7 +238,7 @@ namespace recipe_shuffler.Services
                 Image = model.Image,
                 Instructions = model.Instructions,
                 Ingredients = model.Ingredients,
-                User = _context.Users.Find(_usersService.GetMyId()),
+                UserId = _usersService.GetMyId(),
                 Tags = new HashSet<Tag>(),
                 Protein = model.Protein,
                 Calories = model.Calories,
@@ -245,7 +248,7 @@ namespace recipe_shuffler.Services
             return recipe;
         }
 
-        private async Task<Recipe> ConvertEditModelToDbObj(RecipeEdit model)
+        private Recipe ConvertEditModelToDbObj(RecipeEdit model)
         {
             Recipe recipe = new()
             {
@@ -254,17 +257,11 @@ namespace recipe_shuffler.Services
                 Image = model.Image,
                 Instructions = model.Instructions,
                 Ingredients = model.Ingredients,
-                // UserId = model.UserId,
-                User = await _context.Users.FindAsync(_usersService.GetMyId()),
+                UserId = _usersService.GetMyId(),
                 Protein = model.Protein,
                 Calories = model.Calories,
                 Link = model.Link
             };
-
-            //if (model.TagIds != null)
-            //{
-            //    recipe.Tags = new HashSet<Tag>();
-            //}
 
             return recipe;
         }

@@ -37,7 +37,7 @@ namespace recipe_shuffler.Services.Tags
                     query = query.Where(x => x.UserId == _usersService.GetMyId());
                 }
             }
-            else 
+            else
             {
                 query = query.Where(x => x.UserId == _usersService.GetMyId());
             }
@@ -48,6 +48,7 @@ namespace recipe_shuffler.Services.Tags
                     Id = x.Id,
                     Name = x.Name,
                     Color = x.Color,
+                    IsCategory = x.UserId == null ? true : false
                 });
 
             return list;
@@ -75,8 +76,8 @@ namespace recipe_shuffler.Services.Tags
         {
             bool result = false;
 
-            Tag tag = _context.Tags.
-                Where(x => x.UserId == _usersService.GetMyId())
+            Tag tag = _context.Tags
+                .Where(x => x.UserId == _usersService.GetMyId())
                 .FirstOrDefault(x => x.Id == id);
 
             if (tag != null)
@@ -97,7 +98,7 @@ namespace recipe_shuffler.Services.Tags
                 Id = model.Id,
                 Name = model.Name,
                 Color = model.Color,
-                User = _context.Users.Find(_usersService.GetMyId())
+                UserId = _usersService.GetMyId()
             };
 
             return tag;
