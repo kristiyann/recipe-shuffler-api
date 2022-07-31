@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using recipe_shuffler.DTO.Recipes;
-using recipe_shuffler.Services;
 using recipe_shuffler.Services.Tags;
 using recipe_shuffler.DTO.Tags;
 
@@ -23,7 +21,7 @@ namespace recipe_shuffler.Controllers
 
         [EnableQuery(EnsureStableOrdering = false)]
         [Authorize]
-        public IActionResult GetTagList(ODataQueryOptions<TagList> queryOptions, [FromQuery] TagCustomFilter customFilter = null)
+        public IActionResult GetTagList(ODataQueryOptions<TagList> queryOptions, [FromQuery]TagCustomFilter? customFilter = null)
         {
             if (!ModelState.IsValid)
             {
@@ -31,6 +29,7 @@ namespace recipe_shuffler.Controllers
             }
 
             IQueryable<TagList> list = _service.GetList(customFilter);
+
             return Ok(list);
         }
     }

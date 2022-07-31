@@ -46,7 +46,6 @@ namespace recipe_shuffler.Controllers
 
         }
 
-
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Insert(RecipeInsert model)
@@ -70,20 +69,6 @@ namespace recipe_shuffler.Controllers
 
             return Ok(await _service.Update(model));
         }
-
-        //[HttpPut]
-        //[Route("InsertTag")]
-        //public async Task<IActionResult> InsertTag(TagInsertIntoRecipe model)
-        //{
-        //    return Ok(await _service.InsertTag(model));
-        //}
-
-        //[HttpPut]
-        //[Route("RemoveTag")]
-        //public async Task<IActionResult> RemoveTag(TagInsertIntoRecipe model)
-        //{
-        //    return Ok(await _service.RemoveTag(model));
-        //}
 
         [HttpDelete]
         [Authorize]

@@ -15,7 +15,7 @@ namespace recipe_shuffler.Services.Tags
             _usersService = usersService;
         }
 
-        public IQueryable<TagList> GetList(TagCustomFilter customFilter)
+        public IQueryable<TagList> GetList(TagCustomFilter? customFilter)
         {
             IQueryable<Tag> query = _context.Tags;
 
@@ -31,6 +31,10 @@ namespace recipe_shuffler.Services.Tags
                     {
                         query = query.Where(x => x.UserId == _usersService.GetMyId());
                     }
+                }
+                else
+                {
+                    query = query.Where(x => x.UserId == _usersService.GetMyId());
                 }
             }
             else 
